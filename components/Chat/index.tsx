@@ -3,7 +3,7 @@
 /* eslint-disable no-unused-vars */
 
 import Footer from '../Footer'
-import { useEffect, useState, useContext } from 'react'
+import { useEffect, useState, useContext, useRef } from 'react'
 import dynamic from 'next/dynamic'
 import 'react-quill/dist/quill.snow.css' // import styles
 import './react-quill.css'
@@ -29,6 +29,8 @@ const ChatPage = (id: any) => {
       setNewMessageHtml(value)
     }
   }
+
+  const messagesEndRef = useRef(null)
 
   async function getData() {
     const { userSessionToken } = parseCookies()
@@ -79,6 +81,10 @@ const ChatPage = (id: any) => {
     }
   }
 
+  const scrollToBottomInstant = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'instant' })
+  }
+
   useEffect(() => {
     // Adiciona o event listener
     document.addEventListener('keydown', handleKeyPress)
@@ -88,6 +94,10 @@ const ChatPage = (id: any) => {
       document.removeEventListener('keydown', handleKeyPress)
     }
   }, [newMessageHtml])
+
+  useEffect(() => {
+    scrollToBottomInstant()
+  }, [pythiaChat])
 
   useEffect(() => {
     getData()
@@ -138,6 +148,7 @@ const ChatPage = (id: any) => {
             </div>
           </div>
         ))}
+        <div ref={messagesEndRef} />
       </div>
     )
   }
@@ -148,11 +159,26 @@ const ChatPage = (id: any) => {
         <div className="mt-auto flex h-full w-full flex-col rounded-xl bg-[#F9F9F9] px-[40px] pb-[50px] pt-[40px] shadow-md">
           {renderChatMessages()}
 
-          <div className="mt-auto w-full  px-[40px]">
-            {' '}
+          <div className="mt-auto flex  w-full px-[40px]">
+            {isLoading && (
+              <svg
+                className="mt-1 animate-spin"
+                height="40px"
+                id="Icons"
+                version="1.1"
+                viewBox="0 0 80 80"
+                width="40px"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M58.385,34.343V21.615L53.77,26.23C50.244,22.694,45.377,20.5,40,20.5c-10.752,0-19.5,8.748-19.5,19.5S29.248,59.5,40,59.5  c7.205,0,13.496-3.939,16.871-9.767l-4.326-2.496C50.035,51.571,45.358,54.5,40,54.5c-7.995,0-14.5-6.505-14.5-14.5  S32.005,25.5,40,25.5c3.998,0,7.617,1.632,10.239,4.261l-4.583,4.583H58.385z" />
+              </svg>
+            )}{' '}
             <QuillNoSSRWrapper
+              readOnly={isLoading}
               value={newMessageHtml}
-              onChange={handleChangeNewMessage}
+              onChange={(e) => {
+                handleChangeNewMessage(e)
+              }}
               // disabled={isLoading}
               className="my-quill mx-auto mt-2 w-full max-w-[900px] rounded-md border-[1px] border-[#EAEAEA] bg-[#fff] bg-[#787ca536] text-base font-normal text-[#fff] outline-0 2xl:max-w-[1000px]"
               placeholder="Type your query"

@@ -1,3 +1,4 @@
+/* eslint-disable no-unreachable */
 'use client'
 /* eslint-disable react/no-unescaped-entities */
 /* eslint-disable no-unused-vars */
@@ -37,6 +38,9 @@ const PythiaLandingPage = () => {
     const data = {
       userInput: newMessageHtml,
     }
+
+    toast.error('Sign in to continue')
+    return
 
     try {
       setNewMessageHtml('')
