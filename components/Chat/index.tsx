@@ -96,12 +96,12 @@ const ChatPage = (id: any) => {
   // Render chat messages
   const renderChatMessages = () => {
     return (
-      <div className="grid gap-y-[20px] overflow-hidden overflow-y-auto scrollbar-thin scrollbar-track-[#1D2144] scrollbar-thumb-[#c5c4c4] scrollbar-track-rounded-md scrollbar-thumb-rounded-md ">
+      <div className="mb-[50px] grid gap-y-[0px] overflow-hidden overflow-y-auto scrollbar-thin scrollbar-track-[#1D2144] scrollbar-thumb-[#c5c4c4] scrollbar-track-rounded-md scrollbar-thumb-rounded-md ">
         {pythiaChat?.PythiaInputs.map((input, index) => (
           <div
             key={index}
             className={`mx-auto mb-4 grid w-[1000px] max-w-[1000px] gap-y-[40px] text-[16px] text-[#000] ${
-              index > 0 && 'mt-[30px]'
+              index > 0 && 'mt-[20px]'
             }`}
           >
             <div className="flex items-start gap-x-[10px] text-left">
