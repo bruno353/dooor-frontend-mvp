@@ -95,45 +95,51 @@ const ChatPage = (id: any) => {
 
   // Render chat messages
   const renderChatMessages = () => {
-    return pythiaChat?.PythiaInputs.map((input, index) => (
-      <div
-        key={index}
-        className={`mx-auto mb-4 grid w-[1000px] max-w-[1000px] gap-y-[40px] text-[16px] text-[#000] ${
-          index > 0 && 'mt-[30px]'
-        }`}
-      >
-        <div className="flex items-start gap-x-[10px] text-left">
-          <img
-            src={`${
-              process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-                ? process.env.NEXT_PUBLIC_BASE_PATH
-                : ''
-            }/images/lateralNavBar/profile2.svg`}
-            alt="image"
-            className="mt-[2px]  w-[15px] xl:w-[20px]"
-          />
-          <div>
-            <div className="text-[15px] font-semibold">You</div>
-            <div className="">{getSanitizeText(input.userMessage)}</div>
+    return (
+      <div className="grid gap-y-[20px] overflow-hidden overflow-y-auto scrollbar-thin scrollbar-track-[#1D2144] scrollbar-thumb-[#c5c4c4] scrollbar-track-rounded-md scrollbar-thumb-rounded-md ">
+        {pythiaChat?.PythiaInputs.map((input, index) => (
+          <div
+            key={index}
+            className={`mx-auto mb-4 grid w-[1000px] max-w-[1000px] gap-y-[40px] text-[16px] text-[#000] ${
+              index > 0 && 'mt-[30px]'
+            }`}
+          >
+            <div className="flex items-start gap-x-[10px] text-left">
+              <img
+                src={`${
+                  process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
+                    ? process.env.NEXT_PUBLIC_BASE_PATH
+                    : ''
+                }/images/lateralNavBar/profile2.svg`}
+                alt="image"
+                className="mt-[2px]  w-[15px] xl:w-[20px]"
+              />
+              <div className="">
+                <div className="text-[15px] font-semibold">You</div>
+                <div className="break-all">
+                  {getSanitizeText(input.userMessage)}
+                </div>
+              </div>
+            </div>
+            <div className="flex items-start gap-x-[10px] text-left">
+              <img
+                src={`${
+                  process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
+                    ? process.env.NEXT_PUBLIC_BASE_PATH
+                    : ''
+                }/images/pythia/pythia-cube-logo.svg`}
+                alt="image"
+                className="mt-[2px]  w-[20px] xl:w-[25px]"
+              />
+              <div>
+                <div className="text-[15px] font-semibold">Pythia</div>
+                <div className="">{input.response}</div>
+              </div>
+            </div>
           </div>
-        </div>
-        <div className="flex items-start gap-x-[10px] text-left">
-          <img
-            src={`${
-              process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-                ? process.env.NEXT_PUBLIC_BASE_PATH
-                : ''
-            }/images/pythia/pythia-cube-logo.svg`}
-            alt="image"
-            className="mt-[2px]  w-[20px] xl:w-[25px]"
-          />
-          <div>
-            <div className="text-[15px] font-semibold">Pythia</div>
-            <div>{input.response}</div>
-          </div>
-        </div>
+        ))}
       </div>
-    ))
+    )
   }
 
   return (

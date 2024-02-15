@@ -133,6 +133,8 @@ export function removeTrailingBrTags(htmlContent) {
 export function getSanitizeText(content: string) {
   // Primeiro, sanitizar o conteúdo HTML
   const cleanHtml = DOMPurify.sanitize(content)
+  console.log('clean gtrml')
+  console.log(cleanHtml)
 
   // Em seguida, remover os <br> inúteis no final
   const htmlWithoutTrailingBr = removeTrailingBrTags(cleanHtml)
@@ -141,6 +143,7 @@ export function getSanitizeText(content: string) {
   const htmlTransformado = ReactHtmlParser(htmlWithoutTrailingBr, {
     transform,
   })
+  console.log(htmlTransformado)
 
   return htmlTransformado
 }

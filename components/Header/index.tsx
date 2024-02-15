@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import Image from 'next/image'
 import Link from 'next/link'
-import { useEffect, useState, useContext } from 'react'
+import { useEffect, useState, useContext, useRef } from 'react'
 import ThemeToggler from './ThemeToggler'
 import menuData from './menuData'
 import { UserCircle } from 'phosphor-react'
@@ -30,6 +30,7 @@ const Header = () => {
 
   const cookies = parseCookies()
   const userHasAnyCookie = cookies.userSessionToken
+  const userNavbarRef = useRef(null)
 
   const tagsOptions = [
     'Decentralized data infrastructure',
@@ -240,6 +241,25 @@ const Header = () => {
     setFinalNodes(JSON.parse(savedNodes))
   }, [])
 
+  // useEffect(() => {
+  //   const handleClickOutside = (event) => {
+  //     if (
+  //       userNavbarRef.current &&
+  //       !userNavbarRef.current.contains(event.target)
+  //     ) {
+  //       setUserNavbarOpen(false)
+  //     }
+  //   }
+
+  //   // Adiciona o event listener ao document
+  //   document.addEventListener('mousedown', handleClickOutside)
+
+  //   // Cleanup function para remover o event listener
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleClickOutside)
+  //   }
+  // }, [])
+
   return (
     <>
       <header className="top-0 left-0 z-40 mx-0 w-full items-center bg-[#fff] px-[17px] pt-[7px]  text-[#000000] xl:px-[43px] xl:pt-[20px] xl:pb-[16px]">
@@ -387,13 +407,18 @@ const Header = () => {
                               : `https://cloudflare-ipfs.com/ipfs/${user.profilePictureHash}`
                           }
                           alt="image"
-                          onClick={() => {
-                            setUserNavbarOpen(!userNavbarOpen)
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setUserNavbarOpen(true)
                           }}
                           className={`my-auto mr-[25px] mt-[15px] w-[20px]`}
                         />
                         <nav
-                          className={`navbar absolute left-[0px] z-50 flex w-[150px] rounded-[8px] border-[.5px] bg-[#e6e4e4] pt-[19px] pr-1 pl-[15px] pb-[30px] text-[13px] text-[#fff] duration-300  ${
+                          onClick={(e) => {
+                            e.stopPropagation()
+                          }}
+                          ref={userNavbarRef}
+                          className={`navbar  absolute left-[0px] z-50 flex w-[150px] rounded-[8px] border-[.5px] bg-[#e6e4e4] pt-[19px] pr-1 pl-[15px] pb-[30px] text-[13px] text-[#fff] duration-300  ${
                             userNavbarOpen
                               ? 'visibility -bottom-[120px] -right-[50px] opacity-100'
                               : 'invisible -bottom-[120px] opacity-0'
@@ -402,7 +427,10 @@ const Header = () => {
                           <div className="mt-[10px]">
                             <div className="mt-[25px]">
                               <a
-                                onClick={signOutUser}
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  signOutUser()
+                                }}
                                 className=" cursor-pointer items-center rounded-[5px] border  border-[#000] bg-transparent py-[6px] px-[18px] text-[12px] font-bold !leading-[19px] text-[#575757] hover:bg-[#ececec]"
                               >
                                 Sign out
@@ -413,7 +441,7 @@ const Header = () => {
                             onClick={() => {
                               setUserNavbarOpen(false)
                             }}
-                            className="ml-[20px]  flex cursor-pointer justify-end text-[16px] font-bold text-[#000] hover:text-[#313131]"
+                            className="ml-[20px] flex  h-fit cursor-pointer justify-end text-[16px] font-bold text-[#000] hover:text-[#313131]"
                           >
                             x
                           </div>
