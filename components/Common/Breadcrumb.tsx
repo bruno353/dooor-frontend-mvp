@@ -29,7 +29,7 @@ const Breadcrumb = ({
                     <Link
                       href={`${
                         process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-                          ? `/xnode/`
+                          ? `/pythia/`
                           : `/`
                       }`}
                       className="pr-1 text-base font-medium text-body-color hover:text-primary"
