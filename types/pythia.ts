@@ -9,6 +9,7 @@ export interface PythiaInputProps {
 
 export interface PythiaChatProps {
   id: string
+  name: string
   openmeshExpertUserId: string
   PythiaInputs: PythiaInputProps[]
   createdAt: string

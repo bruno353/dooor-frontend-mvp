@@ -17,6 +17,8 @@ const Sidebar = ({ onValueChange }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [pythiaChats, setPythiaChats] = useState<PythiaChatProps[]>()
+  const [pythiaChatHovered, setPythiaChatHovered] =
+    useState<PythiaChatProps | null>()
 
   const { push } = useRouter()
 
@@ -128,17 +130,44 @@ const Sidebar = ({ onValueChange }) => {
             {pythiaChats &&
               pythiaChats.map((chat, index) => (
                 <div
-                  key={index}
-                  onClick={() => {
-                    sendToChat(chat.id)
+                  onMouseEnter={() => {
+                    setPythiaChatHovered(chat)
+                  }}
+                  onMouseLeave={() => {
+                    setPythiaChatHovered(null)
                   }}
                   className={`${
                     pythiaChat && pythiaChat.id === chat.id
                       ? 'bg-[#e2e2e25d]'
                       : ''
-                  } cursor-pointer overflow-hidden truncate text-ellipsis whitespace-nowrap rounded-md p-[10px] hover:bg-[#e2e2e25d]`}
+                  }  relative overflow-hidden rounded-md hover:bg-[#e2e2e25d]`}
+                  key={index}
                 >
-                  Chat {chat.id}
+                  <div
+                    className={`${
+                      pythiaChat && pythiaChat.id === chat.id
+                        ? 'bg-[#e2e2e25d]'
+                        : ''
+                    } cursor-pointer overflow-hidden truncate text-ellipsis whitespace-nowrap p-[10px]`}
+                    onClick={() => {
+                      sendToChat(chat.id)
+                    }}
+                  >
+                    Chat {chat.name || chat.id}
+                  </div>
+                  {pythiaChatHovered?.id === chat.id && (
+                    <div className="absolute top-0 right-0 flex h-full bg-[#e2e2e25d] px-[10px] text-[10px] backdrop-blur-sm">
+                      <img
+                        src={`${
+                          process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
+                            ? process.env.NEXT_PUBLIC_BASE_PATH
+                            : ''
+                        }/images/pythia/dots.svg`}
+                        alt="image"
+                        className="my-auto w-[16px] cursor-pointer"
+                      />
+                    </div>
+                  )}
                 </div>
               ))}
           </div>
