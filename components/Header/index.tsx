@@ -626,7 +626,7 @@ const Header = () => {
                   href={`${
                     process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
                       ? `/pythia/login`
-                      : `${'/pythia'}`
+                      : `${'/login'}`
                   }`}
                   className=" my-auto h-fit cursor-pointer items-center   border-b  border-[#000] bg-transparent text-[16px]  font-bold !leading-[19px] text-[#000] hover:text-[#3b3a3a]"
                 >

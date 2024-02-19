@@ -57,7 +57,7 @@ const ChatPage = (id: any) => {
     const newUserInput = {
       id: tempId.toString(),
       userMessage: newMessageHtml,
-      response: '...',
+      response: '!$loading!$',
       pythiaChatId: id.id, // Asumindo que este é o ID correto para pythiaChatId
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -81,8 +81,9 @@ const ChatPage = (id: any) => {
       const res = await inputUserChatMessage(data, userSessionToken)
       newUserInput.response = 'Pythia response here blablabla'
       const newInputToSet = [...inputs, newUserInput]
-      chatPythiaNew.PythiaInputs = newInputToSet
-      setPythiaChat(chatPythiaNew)
+      const newChat = { ...chatPythiaNew }
+      newChat.PythiaInputs = newInputToSet
+      setPythiaChat(newChat)
     } catch (err) {
       console.log(err)
       toast.error(`Error: ${err.response.data.message}`)
@@ -168,7 +169,25 @@ const ChatPage = (id: any) => {
               />
               <div>
                 <div className="text-[15px] font-semibold">Pythia</div>
-                <div className="">{input.response}</div>
+                {input.response === '!$loading!$' ? (
+                  <svg
+                    className="mt-1 animate-spin "
+                    width="30px"
+                    height="30px"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M20.0001 12C20.0001 13.3811 19.6425 14.7386 18.9623 15.9405C18.282 17.1424 17.3022 18.1477 16.1182 18.8587C14.9341 19.5696 13.5862 19.9619 12.2056 19.9974C10.825 20.0328 9.45873 19.7103 8.23975 19.0612"
+                      stroke="#3253FE"
+                      strokeWidth="3.55556"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                ) : (
+                  <div className="">{input.response}</div>
+                )}
               </div>
             </div>
           </div>
