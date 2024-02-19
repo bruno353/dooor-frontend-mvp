@@ -64,7 +64,7 @@ const ChatPage = (id: any) => {
     }
 
     const chatPythiaNew = { ...pythiaChat }
-    const inputs = [...pythiaChat.PythiaInputs]
+    const inputs = [...pythiaChat.PythiaInputs, newUserInput]
 
     chatPythiaNew.PythiaInputs = inputs
 
