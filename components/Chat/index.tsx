@@ -57,16 +57,17 @@ const ChatPage = (id: any) => {
     const newUserInput = {
       id: tempId.toString(),
       userMessage: newMessageHtml,
-      response: "Waiting for Pythia's response...",
+      response: '...',
       pythiaChatId: id.id, // Asumindo que este é o ID correto para pythiaChatId
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }
 
     const chatPythiaNew = { ...pythiaChat }
-    const inputs = [...pythiaChat.PythiaInputs, newUserInput]
+    const inputs = [...pythiaChat.PythiaInputs]
+    const finalInputs = [...inputs, newUserInput]
 
-    chatPythiaNew.PythiaInputs = inputs
+    chatPythiaNew.PythiaInputs = finalInputs
 
     setPythiaChat(chatPythiaNew)
 
@@ -78,6 +79,10 @@ const ChatPage = (id: any) => {
     try {
       setNewMessageHtml('')
       const res = await inputUserChatMessage(data, userSessionToken)
+      newUserInput.response = 'Pythia response here blablabla'
+      const newInputToSet = [...inputs, newUserInput]
+      chatPythiaNew.PythiaInputs = newInputToSet
+      setPythiaChat(chatPythiaNew)
     } catch (err) {
       console.log(err)
       toast.error(`Error: ${err.response.data.message}`)
