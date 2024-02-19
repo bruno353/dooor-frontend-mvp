@@ -53,6 +53,10 @@ const ChatPage = (id: any) => {
     const { userSessionToken } = parseCookies()
     const tempId = Date.now() // Usando timestamp como ID temporário
 
+    if (!newMessageHtml || newMessageHtml.length === 0) {
+      return
+    }
+
     // Adicionando a mensagem do usuário ao chat imediatamente
     const newUserInput = {
       id: tempId.toString(),
