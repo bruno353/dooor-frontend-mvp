@@ -48,7 +48,7 @@ const PythiaLandingPage = () => {
       push(
         `${
           process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-            ? `/xnode/chat/${res.id}`
+            ? `/pythia/chat/${res.id}`
             : `/chat/${res.id}`
         }`,
       )

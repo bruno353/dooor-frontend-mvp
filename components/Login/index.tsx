@@ -94,7 +94,7 @@ const Login = () => {
       setUser(res)
       setIsLoading(false)
       push(
-        `${process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD' ? `/xnode/` : `/`}`,
+        `${process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD' ? `/pythia/` : `/`}`,
       )
     } catch (err) {
       if (err.response.data.message === 'Unconfirmed Email') {

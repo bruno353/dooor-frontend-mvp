@@ -45,7 +45,7 @@ const Sidebar = ({ onValueChange }) => {
     push(
       `${
         process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-          ? `/xnode/chat/${id}`
+          ? `/pythia/chat/${id}`
           : `/chat/${id}`
       }`,
     )
@@ -97,7 +97,7 @@ const Sidebar = ({ onValueChange }) => {
               <a
                 href={`${
                   process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-                    ? `/xnode/`
+                    ? `/pythia/`
                     : '/'
                 }`}
                 className="absolute -top-[8px] left-[15px] flex w-[50px] cursor-pointer flex-col items-center lg:-top-[22px] lg:left-[50px] lg:w-[100px] "
