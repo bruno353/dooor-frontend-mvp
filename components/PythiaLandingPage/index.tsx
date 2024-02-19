@@ -39,9 +39,6 @@ const PythiaLandingPage = () => {
       userInput: newMessageHtml,
     }
 
-    toast.error('Sign in to continue')
-    return
-
     try {
       setNewMessageHtml('')
       const res = await createUserChat(data, userSessionToken)
@@ -52,6 +49,7 @@ const PythiaLandingPage = () => {
             : `/chat/${res.id}`
         }`,
       )
+      window.location.reload()
     } catch (err) {
       console.log(err)
       toast.error(`Error: ${err.response.data.message}`)

@@ -102,6 +102,31 @@ export async function getUserChat(data: any, userSessionToken: string) {
   return finalData
 }
 
+export async function deleteUserChat(data: any, userSessionToken: string) {
+  const config = {
+    method: 'post' as 'post',
+    url: `${process.env.NEXT_PUBLIC_API_BACKEND_BASE_URL}/pythia/functions/deleteUserChat`,
+    headers: {
+      'x-parse-application-id': `${process.env.NEXT_PUBLIC_API_BACKEND_KEY}`,
+      'X-Parse-Session-Token': userSessionToken,
+      'Content-Type': 'application/json',
+    },
+    data,
+  }
+
+  let finalData
+
+  await axios(config).then(function (response) {
+    if (response.data) {
+      finalData = response.data
+      console.log('api response')
+      console.log(finalData)
+    }
+  })
+
+  return finalData
+}
+
 export async function changeChatName(data: any, userSessionToken: string) {
   const config = {
     method: 'put' as 'put',
