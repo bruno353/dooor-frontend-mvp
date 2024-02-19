@@ -13,6 +13,7 @@ import { AccountContext } from '@/contexts/AccountContext'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { getSanitizeText } from '@/utils/functions-chat'
+import { PythiaChatProps, PythiaInputProps } from '@/types/pythia'
 
 const QuillNoSSRWrapper = dynamic(import('react-quill'), {
   ssr: false,
@@ -50,6 +51,25 @@ const ChatPage = (id: any) => {
 
   async function handleCreateNewInput() {
     const { userSessionToken } = parseCookies()
+    const tempId = Date.now() // Usando timestamp como ID temporário
+
+    // Adicionando a mensagem do usuário ao chat imediatamente
+    const newUserInput = {
+      id: tempId.toString(),
+      userMessage: newMessageHtml,
+      response: "Waiting for Pythia's response...",
+      pythiaChatId: id.id, // Asumindo que este é o ID correto para pythiaChatId
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+
+    const chatPythiaNew = { ...pythiaChat }
+    const inputs = [...pythiaChat.PythiaInputs]
+
+    chatPythiaNew.PythiaInputs = inputs
+
+    setPythiaChat(chatPythiaNew)
+
     const data = {
       id: id.id,
       userInput: newMessageHtml,
