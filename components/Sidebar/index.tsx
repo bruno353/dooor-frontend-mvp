@@ -396,7 +396,7 @@ const Sidebar = ({ onValueChange }) => {
                                           setPythiaChatName(chat.name)
                                           setIsChatMenuOpen(null)
                                         }}
-                                        className="flex cursor-pointer gap-x-[5px] rounded-sm px-[10px] py-[5px] hover:bg-[#e2e2e25d]"
+                                        className="flex cursor-pointer gap-x-[7px] rounded-sm px-[10px] py-[5px] hover:bg-[#e2e2e25d]"
                                       >
                                         <img
                                           src={`${
