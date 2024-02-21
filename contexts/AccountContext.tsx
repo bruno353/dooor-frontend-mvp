@@ -75,6 +75,9 @@ interface CreateUserContextProps {
   signup: boolean
   setSignup: (value: boolean) => void
 
+  pythiaUpdated: boolean
+  setPythiaUpdated: (value: boolean) => void
+
   connections: boolean
   setConnections: (value: boolean) => void
 
@@ -111,6 +114,7 @@ export default function AccountContextProvider({
   const [selectCurrentMenuDataType, setselectCurrentMenuDataType] =
     useState<string>('')
   const [isWorkspace, setIsWorkspace] = useState<boolean>(false)
+  const [pythiaUpdated, setPythiaUpdated] = useState<boolean>(false)
   const [isEditingXnode, setIsEditingXnode] = useState<boolean>(false)
   const [finalNodes, setFinalNodes] = useState<any>()
   const [next, setNext] = useState<boolean>(false)
@@ -133,6 +137,8 @@ export default function AccountContextProvider({
         projectName,
         setProjectName,
         setProjectDescription,
+        pythiaUpdated,
+        setPythiaUpdated,
         projectDescription,
         selectCurrentMenuDataType,
         isEditingXnode,

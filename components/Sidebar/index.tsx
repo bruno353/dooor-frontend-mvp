@@ -24,7 +24,7 @@ import {
 const Sidebar = ({ onValueChange }) => {
   const [categoriesOptions, setCategoriesOptions] = useState([])
   const [presetId, setPresetId] = useState(0)
-  const { user, pythiaChat } = useContext(AccountContext)
+  const { user, pythiaChat, pythiaUpdated } = useContext(AccountContext)
   const [isOpen, setIsOpen] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [pythiaChats, setPythiaChats] = useState<PythiaChatProps[]>()
@@ -89,6 +89,12 @@ const Sidebar = ({ onValueChange }) => {
       getData()
     }
   }, [user])
+
+  useEffect(() => {
+    if (user) {
+      getData()
+    }
+  }, [pythiaUpdated])
 
   useEffect(() => {
     const handleClickOutside = (event) => {

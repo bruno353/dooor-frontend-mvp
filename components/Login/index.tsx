@@ -21,6 +21,7 @@ import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.css'
 import nookies, { parseCookies, setCookie } from 'nookies'
 import { AccountContext } from '../../contexts/AccountContext'
+import { signMessage, disconnect } from '@wagmi/core'
 
 import { TextField, Autocomplete } from '@mui/material'
 

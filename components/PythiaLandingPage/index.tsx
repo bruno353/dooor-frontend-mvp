@@ -23,7 +23,7 @@ const QuillNoSSRWrapper = dynamic(import('react-quill'), {
 const PythiaLandingPage = () => {
   const [newMessageHtml, setNewMessageHtml] = useState('')
 
-  const { user } = useContext(AccountContext)
+  const { user, pythiaUpdated, setPythiaUpdated } = useContext(AccountContext)
 
   const { push } = useRouter()
 
@@ -42,6 +42,7 @@ const PythiaLandingPage = () => {
     try {
       setNewMessageHtml('')
       const res = await createUserChat(data, userSessionToken)
+      console.log('user to push')
       push(
         `${
           process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
@@ -49,7 +50,7 @@ const PythiaLandingPage = () => {
             : `/chat/${res.id}`
         }`,
       )
-      window.location.reload()
+      setPythiaUpdated(!pythiaUpdated)
     } catch (err) {
       console.log(err)
       toast.error(`Error: ${err.response.data.message}`)

@@ -6,12 +6,20 @@ import ThemeToggler from './ThemeToggler'
 import menuData from './menuData'
 import { UserCircle } from 'phosphor-react'
 import * as Dialog from '@radix-ui/react-dialog'
-import { parseCookies, destroyCookie } from 'nookies'
+import nookies, { parseCookies, destroyCookie, setCookie } from 'nookies'
 import axios from 'axios'
 import { AccountContext } from '../../contexts/AccountContext'
 import { usePathname, useSearchParams, useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
+import { useAccount, useNetwork } from 'wagmi'
 import 'react-toastify/dist/ReactToastify.css'
+import {
+  useWeb3ModalTheme,
+  Web3NetworkSwitch,
+  Web3Button,
+} from '@web3modal/react'
+import { hashObject } from '@/utils/functions'
+import { signMessage, disconnect } from '@wagmi/core'
 
 const Header = () => {
   // Navbar toggle
@@ -83,6 +91,7 @@ const Header = () => {
   function signOutUser() {
     destroyCookie(undefined, 'userSessionToken')
     setUser(null)
+    disconnect()
   }
 
   const features = [
@@ -212,8 +221,10 @@ const Header = () => {
   useEffect(() => {
     if (userHasAnyCookie) {
       try {
+        console.log('getting the user data')
         getUserData()
       } catch (err) {
+        console.log('eroror getting the user session token')
         destroyCookie(undefined, 'userSessionToken')
         setUser(null)
       }
@@ -240,6 +251,81 @@ const Header = () => {
 
     setFinalNodes(JSON.parse(savedNodes))
   }, [])
+
+  async function getUserNonce(userAddress: string) {
+    const config = {
+      method: 'post' as 'post',
+      url: `${process.env.NEXT_PUBLIC_API_BACKEND_BASE_URL}/openmesh-experts/functions/getUserNonce`,
+      headers: {
+        'x-parse-application-id': `${process.env.NEXT_PUBLIC_API_BACKEND_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      data: {
+        address: userAddress,
+      },
+    }
+    let dado
+
+    await axios(config).then(function (response) {
+      if (response.data) {
+        dado = response.data
+      }
+    })
+    return dado
+  }
+
+  async function loginWeb3User(userAddress: string, signature: string) {
+    const config = {
+      method: 'post' as 'post',
+      url: `${process.env.NEXT_PUBLIC_API_BACKEND_BASE_URL}/openmesh-experts/functions/loginByWeb3Address`,
+      headers: {
+        'x-parse-application-id': `${process.env.NEXT_PUBLIC_API_BACKEND_KEY}`,
+      },
+      data: {
+        address: userAddress,
+        signature,
+      },
+    }
+
+    let dado
+
+    await axios(config).then(function (response) {
+      if (response.data) {
+        dado = response.data
+      }
+    })
+
+    return dado
+  }
+
+  const { address } = useAccount()
+
+  useEffect(() => {
+    async function getWeb3Login() {
+      if (address && !user && !userHasAnyCookie) {
+        // trying web3 login
+        try {
+          let nonceUser = await getUserNonce(address)
+          nonceUser = nonceUser || '0'
+          const hash = hashObject(`${address}-${nonceUser}`)
+          console.log('message to hash')
+          console.log(hash)
+          const finalHash = `0x${hash}`
+          const signature = await signMessage({
+            message: finalHash,
+          })
+          const res = await loginWeb3User(address, signature)
+          setCookie(null, 'userSessionToken', res.sessionToken)
+          nookies.set(null, 'userSessionToken', res.sessionToken)
+          setUser(res)
+        } catch (err) {
+          toast.error(err)
+          console.log('error loging user')
+        }
+      }
+    }
+    getWeb3Login()
+  }, [address])
 
   // useEffect(() => {
   //   const handleClickOutside = (event) => {
@@ -394,11 +480,11 @@ const Header = () => {
                     </a>
                   ))}
                   <div className="grid gap-y-[12px] font-medium">
-                    {user?.sessionToken ? (
+                    {userHasAnyCookie ? (
                       <div className="my-auto">
                         <img
                           src={
-                            !user.profilePictureHash
+                            !user?.profilePictureHash
                               ? `${
                                   process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
                                     ? process.env.NEXT_PUBLIC_BASE_PATH
@@ -622,19 +708,23 @@ const Header = () => {
                   </nav>
                 </div>
               ) : (
-                <a
-                  href={`${
-                    process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-                      ? `/pythia/login`
-                      : `${'/login'}`
-                  }`}
-                  className=" my-auto h-fit cursor-pointer items-center   border-b  border-[#000] bg-transparent text-[16px]  font-bold !leading-[19px] text-[#000] hover:text-[#3b3a3a]"
-                >
-                  Login
-                </a>
+                <div className="flex">
+                  <a
+                    href={`${
+                      process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
+                        ? `/pythia/login`
+                        : `${'/login'}`
+                    }`}
+                    className=" my-auto h-fit cursor-pointer items-center   border-b  border-[#000] bg-transparent text-[16px]  font-bold !leading-[19px] text-[#000] hover:text-[#3b3a3a]"
+                  >
+                    <div>Login</div>
+                  </a>
+                  <div className="ml-[20px]">
+                    <Web3Button />
+                  </div>{' '}
+                </div>
               )}
             </div>
-
             {/* <div className="lg:hidden">
             <Dialog.Root>
               <Dialog.Trigger>
