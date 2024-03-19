@@ -424,7 +424,7 @@ const Sidebar = ({ onValueChange }) => {
                                         onClick={() => {
                                           handleDeletePythiaChat(chat)
                                         }}
-                                        className="flex  cursor-pointer justify-center gap-x-[5px] rounded-sm px-[10px] py-[5px] hover:bg-[#e2e2e25d]"
+                                        className="flex  cursor-pointer gap-x-[14px] rounded-sm px-[10px] py-[5px] hover:bg-[#e2e2e25d]"
                                       >
                                         <img
                                           src={`${
