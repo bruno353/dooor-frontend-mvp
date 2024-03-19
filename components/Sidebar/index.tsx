@@ -296,7 +296,7 @@ const Sidebar = ({ onValueChange }) => {
                 />
               </a>
             </div>
-            <div className="absolute top-[14px] flex w-[10.5px] cursor-pointer flex-col items-center lg:top-[92px] lg:w-[21.5px]">
+            <div className="absolute top-[14px] h-[25px] gap-x-[20px] flex w-[10.5px] cursor-pointer items-center lg:top-[92px] lg:w-[21.5px]">
               <img
                 src={`${
                   process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
@@ -305,6 +305,10 @@ const Sidebar = ({ onValueChange }) => {
                 }/images/logo/search.svg`}
                 alt="image"
               />
+              {isOpen && (
+                <input placeholder='Search chat' className="w-[140px] h-[25px] rounded-[3px] bg-transparent border border-transparent px-2 text-[13px] text-[#000] placeholder-body-color outline-none focus:border-primary border-[#9e9e9e]"
+               />
+              )}
             </div>
           </div>
           <div className="!z-30 mt-[100px] grid gap-y-[10px] px-[22px] text-[13px] text-[#000]">
