@@ -35,7 +35,7 @@ const PythiaLandingPage = () => {
 
   const messagesEndRef = useRef(null)
 
-  async function handleCreateNewInput() {
+  async function handleCreateChat() {
     console.log('fui chamado')
     const { userSessionToken } = parseCookies()
     const tempId = Date.now() // Usando timestamp como ID temporário
@@ -89,8 +89,11 @@ const PythiaLandingPage = () => {
   }
 
   function newMessageSave() {
-    if (!isLoading) {
-      handleCreateNewInput()
+    if (!user) {
+      setNewMessageHtml('')
+      toast.error('Login to chat with Pythia')
+    } else {
+      handleCreateChat()
     }
   }
 
