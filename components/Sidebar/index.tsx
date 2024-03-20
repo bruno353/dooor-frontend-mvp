@@ -34,7 +34,9 @@ const Sidebar = ({ onValueChange }) => {
   const [pythiaChatRename, setPythiaChatRename] =
     useState<PythiaChatProps | null>()
   const [pythiaChatName, setPythiaChatName] = useState<string>('www')
+  const [inputValue, setInputValue] = useState<string>('')
   const { push } = useRouter()
+  const [allPythiaChats, setAllPythiaChats] = useState<PythiaChatProps[]>()
 
   const menuRef = useRef(null)
   const chatNameRef = useRef(null)
@@ -76,6 +78,7 @@ const Sidebar = ({ onValueChange }) => {
 
     try {
       const res = await getUserChats(userSessionToken)
+      setAllPythiaChats(res)
       setPythiaChats(res)
     } catch (err) {
       console.log(err)
@@ -237,6 +240,22 @@ const Sidebar = ({ onValueChange }) => {
     return categorizedChats
   }
 
+  useEffect(() => {
+    let filteredChats = allPythiaChats
+    if (inputValue.length > 0) {
+      filteredChats = allPythiaChats?.filter(chat => 
+        {
+          if (!chat?.name) {
+            return `Chat ${chat.id}`.toLowerCase().includes(inputValue.toLowerCase())
+          } else {
+            return chat?.name?.toLowerCase().includes(inputValue.toLowerCase())
+          }
+        }
+      )
+    }
+    setPythiaChats(filteredChats)
+  }, [inputValue, allPythiaChats])
+
   const hasChatsForFilter = (filter) => {
     return pythiaChats?.some((chat) => validateDateChat(filter, chat))
   }
@@ -306,7 +325,9 @@ const Sidebar = ({ onValueChange }) => {
                 alt="image"
               />
               {isOpen && (
-                <input placeholder='Search chat' className="w-[140px] h-[25px] rounded-[3px] bg-transparent border border-transparent px-2 text-[13px] text-[#000] placeholder-body-color outline-none focus:border-primary border-[#9e9e9e]"
+                <input value={inputValue} onChange={(e) => {
+                  setInputValue(e.target.value)
+                }} placeholder='Search chat' className="w-[140px] h-[25px] rounded-[3px] bg-transparent border px-2 text-[13px] text-[#000] placeholder-body-color outline-none focus:border-primary border-[#9e9e9ea2]"
                />
               )}
             </div>
