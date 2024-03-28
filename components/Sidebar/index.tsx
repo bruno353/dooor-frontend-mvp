@@ -243,15 +243,15 @@ const Sidebar = ({ onValueChange }) => {
   useEffect(() => {
     let filteredChats = allPythiaChats
     if (inputValue.length > 0) {
-      filteredChats = allPythiaChats?.filter(chat => 
-        {
-          if (!chat?.name) {
-            return `Chat ${chat.id}`.toLowerCase().includes(inputValue.toLowerCase())
-          } else {
-            return chat?.name?.toLowerCase().includes(inputValue.toLowerCase())
-          }
+      filteredChats = allPythiaChats?.filter((chat) => {
+        if (!chat?.name) {
+          return `Chat ${chat.id}`
+            .toLowerCase()
+            .includes(inputValue.toLowerCase())
+        } else {
+          return chat?.name?.toLowerCase().includes(inputValue.toLowerCase())
         }
-      )
+      })
     }
     setPythiaChats(filteredChats)
   }, [inputValue, allPythiaChats])
@@ -315,7 +315,7 @@ const Sidebar = ({ onValueChange }) => {
                 />
               </a>
             </div>
-            <div className="absolute top-[14px] h-[25px] gap-x-[20px] flex w-[10.5px] cursor-pointer items-center lg:top-[92px] lg:w-[21.5px]">
+            <div className="absolute top-[14px] flex h-[25px] w-[10.5px] cursor-pointer items-center gap-x-[20px] lg:top-[92px] lg:w-[21.5px]">
               <img
                 src={`${
                   process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
@@ -325,10 +325,14 @@ const Sidebar = ({ onValueChange }) => {
                 alt="image"
               />
               {isOpen && (
-                <input value={inputValue} onChange={(e) => {
-                  setInputValue(e.target.value)
-                }} placeholder='Search chat' className="w-[140px] h-[25px] rounded-[3px] bg-transparent border px-2 text-[13px] text-[#000] placeholder-body-color outline-none focus:border-primary border-[#9e9e9ea2]"
-               />
+                <input
+                  value={inputValue}
+                  onChange={(e) => {
+                    setInputValue(e.target.value)
+                  }}
+                  placeholder="Search chat"
+                  className="h-[25px] w-[140px] rounded-[3px] border border-[#9e9e9ea2] bg-transparent px-2 text-[13px] text-[#000] placeholder-body-color outline-none focus:border-primary"
+                />
               )}
             </div>
           </div>
