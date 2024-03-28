@@ -83,7 +83,7 @@ const ChatPage = (id: any) => {
     try {
       setNewMessageHtml('')
       const res = await inputUserChatMessage(data, userSessionToken)
-      newUserInput.response = 'Pythia response here blablabla'
+      newUserInput.response = res.response
       const newInputToSet = [...inputs, newUserInput]
       const newChat = { ...chatPythiaNew }
       newChat.PythiaInputs = newInputToSet
