@@ -8,7 +8,11 @@ import dynamic from 'next/dynamic'
 import 'react-quill/dist/quill.snow.css' // import styles
 import './react-quill.css'
 import nookies, { parseCookies, setCookie } from 'nookies'
-import { createUserChat, getUserChat, inputUserChatMessage } from '@/utils/api-pythia'
+import {
+  createUserChat,
+  getUserChat,
+  inputUserChatMessage,
+} from '@/utils/api-pythia'
 import { AccountContext } from '@/contexts/AccountContext'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -24,7 +28,8 @@ const QuillNoSSRWrapper = dynamic(import('react-quill'), {
 const PythiaLandingPage = () => {
   const [newMessageHtml, setNewMessageHtml] = useState('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const { user, setPythiaChat, pythiaChat, pythiaUpdated, setPythiaUpdated } = useContext(AccountContext)
+  const { user, setPythiaChat, pythiaChat, pythiaUpdated, setPythiaUpdated } =
+    useContext(AccountContext)
   const { push } = useRouter()
 
   function handleChangeNewMessage(value) {
@@ -57,9 +62,7 @@ const PythiaLandingPage = () => {
       id: 'id.id',
       name: '',
       openmeshExpertUserId: 'id.id',
-      PythiaInputs: [
-        newUserInput
-      ],
+      PythiaInputs: [newUserInput],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }
@@ -125,7 +128,6 @@ const PythiaLandingPage = () => {
   useEffect(() => {
     scrollToBottomInstant()
   }, [pythiaChat])
-
 
   // Render chat messages
   const renderChatMessages = () => {
