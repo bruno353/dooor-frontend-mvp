@@ -11,6 +11,7 @@ import nookies, { parseCookies, setCookie } from 'nookies'
 import {
   createUserChat,
   getUserChat,
+  inputNonUserChatMessage,
   inputUserChatMessage,
 } from '@/utils/api-pythia'
 import { AccountContext } from '@/contexts/AccountContext'
@@ -39,6 +40,64 @@ const PythiaLandingPage = () => {
   }
 
   const messagesEndRef = useRef(null)
+
+  async function handleNonUserCreateChat() {
+    const tempId = Date.now() // Usando timestamp como ID temporário
+
+    if (!newMessageHtml || newMessageHtml.length === 0) {
+      return
+    }
+
+    const newUserInput = {
+      id: tempId.toString(),
+      userMessage: newMessageHtml,
+      response: '!$loading!$',
+      pythiaChatId: 'id.id',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    }
+    let inputs = []
+
+    if (pythiaChat) {
+      const chatPythiaNew = { ...pythiaChat }
+      inputs = [...pythiaChat.PythiaInputs]
+      const finalInputs = [...inputs, newUserInput]
+
+      chatPythiaNew.PythiaInputs = finalInputs
+
+      setPythiaChat(chatPythiaNew)
+    } else {
+      const pythiaChat = {
+        id: 'id.id',
+        name: '',
+        openmeshExpertUserId: 'id.id',
+        PythiaInputs: [newUserInput],
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }
+
+      const chatPythiaNew = { ...pythiaChat }
+
+      setPythiaChat(chatPythiaNew)
+    }
+
+    const data = {
+      userInput: newMessageHtml,
+    }
+
+    try {
+      setNewMessageHtml('')
+      const res = await inputNonUserChatMessage(data)
+      newUserInput.response = res.response
+      const newInputToSet = [...inputs, newUserInput]
+      const newChat = { ...pythiaChat }
+      newChat.PythiaInputs = newInputToSet
+      setPythiaChat(newChat)
+    } catch (err) {
+      console.log(err)
+      toast.error(`Error: ${err.response.data.message}`)
+    }
+  }
 
   async function handleCreateChat() {
     console.log('fui chamado')
@@ -93,8 +152,7 @@ const PythiaLandingPage = () => {
 
   function newMessageSave() {
     if (!user) {
-      setNewMessageHtml('')
-      toast.error('Login to chat with Pythia')
+      handleNonUserCreateChat()
     } else {
       handleCreateChat()
     }
