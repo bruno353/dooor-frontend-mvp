@@ -92,6 +92,7 @@ const Header = () => {
     destroyCookie(undefined, 'userSessionToken')
     setUser(null)
     disconnect()
+    window.location.reload()
   }
 
   const features = [

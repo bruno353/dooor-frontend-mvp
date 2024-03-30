@@ -315,7 +315,7 @@ const Sidebar = ({ onValueChange }) => {
                 />
               </a>
             </div>
-            <div className="absolute top-[14px] flex h-[25px] w-[10.5px] cursor-pointer items-center gap-x-[20px] lg:top-[92px] lg:w-[21.5px]">
+            <div className="absolute top-[14px] flex h-[25px] w-[10.5px] items-center gap-x-[20px] lg:top-[92px] lg:w-[21.5px]">
               <img
                 src={`${
                   process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
@@ -331,7 +331,7 @@ const Sidebar = ({ onValueChange }) => {
                     setInputValue(e.target.value)
                   }}
                   placeholder="Search chat"
-                  className="h-[25px] w-[140px] rounded-[3px] border border-[#9e9e9ea2] bg-transparent px-2 text-[13px] text-[#000] placeholder-body-color outline-none focus:border-primary"
+                  className="h-[25px] w-[160px] rounded-[5px] border border-[#9e9e9e50] bg-transparent px-2 text-[13px] text-[#000] placeholder-body-color outline-none focus:border-primary"
                 />
               )}
             </div>
@@ -342,7 +342,7 @@ const Sidebar = ({ onValueChange }) => {
                 if (hasChatsForFilter(filter)) {
                   return (
                     <div key={index} className="">
-                      <div>{filter}</div>
+                      <div className="text-[#000000a8]">{filter}</div>
                       <div className="mt-[5px] mb-[5px] grid gap-y-[5px]">
                         {pythiaChats &&
                           pythiaChats.map((chat, index) => {
