@@ -259,7 +259,24 @@ const PythiaLandingPage = () => {
     <>
       <div className="flex h-full max-h-[calc(100vh-6rem)] flex-1 flex-col justify-between px-[50px]  pb-16 text-[16px] text-[#C5C4C4] md:pb-20  lg:pb-8  2xl:text-[18px]">
         <div className="mt-auto flex h-full w-full flex-col rounded-xl bg-[#F9F9F9] px-[40px] pb-[50px] pt-[40px] shadow-md">
-          {renderChatMessages()}
+          {pythiaChat?.PythiaInputs?.length > 0 ? (
+            renderChatMessages()
+          ) : (
+            <div className="mx-auto  mt-auto mb-32">
+              <img
+                src={`${
+                  process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
+                    ? process.env.NEXT_PUBLIC_BASE_PATH
+                    : ''
+                }/images/logo/pythia-cube.svg`}
+                alt="image"
+                className={`mx-auto w-[40px]`}
+              />
+              <div className="mt-5 text-xl font-semibold text-[#000]">
+                How can Pythia help you?
+              </div>
+            </div>
+          )}
 
           <div className="mt-auto flex  w-full px-[40px]">
             {isLoading && (

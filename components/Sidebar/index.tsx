@@ -124,7 +124,6 @@ const Sidebar = ({ onValueChange }) => {
   }, [pythiaChatName])
 
   async function handleDeletePythiaChat(chat: PythiaChatProps) {
-    console.log('delete chamado yes')
     const { userSessionToken } = parseCookies()
 
     const data = {
@@ -145,7 +144,6 @@ const Sidebar = ({ onValueChange }) => {
   }
 
   async function handleSaveNewChatName() {
-    console.log('the chat name')
     console.log(pythiaChatNameRef.current)
     setIsLoading(true)
     const { userSessionToken } = parseCookies()
@@ -168,7 +166,6 @@ const Sidebar = ({ onValueChange }) => {
       const newPythiaChat = [...pythiaChats]
 
       const indexP = newPythiaChat.findIndex((chat) => chat.id === idToSet)
-      console.log('o index  ' + indexP)
       newPythiaChat[indexP].name = pythiaChatNameRef.current
       setPythiaChats(newPythiaChat)
       setPythiaChatRename(null)
