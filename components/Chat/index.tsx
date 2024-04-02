@@ -23,6 +23,7 @@ const QuillNoSSRWrapper = dynamic(import('react-quill'), {
 const ChatPage = (id: any) => {
   const [newMessageHtml, setNewMessageHtml] = useState('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isInfoThumbDown, setIsInfoThumbDown] = useState<string | null>(null)
   const { user, setPythiaChat, pythiaChat } = useContext(AccountContext)
 
   function handleChangeNewMessage(value) {
@@ -152,7 +153,7 @@ const ChatPage = (id: any) => {
                     : ''
                 }/images/lateralNavBar/profile2.svg`}
                 alt="image"
-                className="mt-[2px]  w-[15px] xl:w-[20px]"
+                className="mt-[2px]  w-[15px] xl:w-[22px]"
               />
               <div className="">
                 <div className="text-[15px] font-semibold">You</div>
@@ -169,7 +170,7 @@ const ChatPage = (id: any) => {
                     : ''
                 }/images/pythia/pythia-cube-logo.svg`}
                 alt="image"
-                className="mt-[2px]  w-[20px] xl:w-[25px]"
+                className="mt-[2px]  min-w-[20px] xl:min-w-[25px]"
               />
               <div>
                 <div className="text-[15px] font-semibold">Pythia</div>
@@ -190,7 +191,29 @@ const ChatPage = (id: any) => {
                     />
                   </svg>
                 ) : (
-                  <div className="">{input.response}</div>
+                  <div>
+                    <div className="mb-2">{input.response}</div>
+                    <div className="relative">
+                      <img
+                        src={`${
+                          process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
+                            ? process.env.NEXT_PUBLIC_BASE_PATH
+                            : ''
+                        }/images/pythia/thumb-down.svg`}
+                        alt="image"
+                        className="mt-[2px] w-[17px] cursor-pointer"
+                        onMouseEnter={() => setIsInfoThumbDown(input.id)}
+                        onMouseLeave={() => setIsInfoThumbDown(null)}
+                      />
+                      <div
+                        className={`absolute translate-y-2 rounded-md bg-[#000] px-4 py-1 text-sm text-[#fff] ${
+                          isInfoThumbDown === input.id ? '' : 'hidden'
+                        }`}
+                      >
+                        Bad response
+                      </div>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
