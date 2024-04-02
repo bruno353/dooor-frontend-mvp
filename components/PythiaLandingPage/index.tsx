@@ -206,7 +206,7 @@ const PythiaLandingPage = () => {
                     : ''
                 }/images/lateralNavBar/profile2.svg`}
                 alt="image"
-                className="mt-[2px]  w-[15px] xl:w-[20px]"
+                className="mt-[2px]  w-[15px] xl:w-[22px]"
               />
               <div className="">
                 <div className="text-[15px] font-semibold">You</div>
