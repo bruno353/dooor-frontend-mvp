@@ -709,18 +709,19 @@ const Header = () => {
                   </nav>
                 </div>
               ) : (
-                <div className="flex">
+                <div className="flex items-center">
                   <a
                     href={`${
                       process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
                         ? `/pythia/login`
                         : `${'/login'}`
                     }`}
-                    className=" my-auto h-fit cursor-pointer items-center   border-b  border-[#000] bg-transparent text-[16px]  font-bold !leading-[19px] text-[#000] hover:text-[#3b3a3a]"
+                    className=" my-auto h-fit cursor-pointer items-center  bg-transparent text-[16px]  font-bold !leading-[19px] text-[#000] hover:text-[#3b3a3a]"
                   >
                     <div>Login</div>
                   </a>
-                  <div className="ml-[20px]">
+                  <div className="mx-[10px] text-[#3D3D3D]">or</div>
+                  <div className="">
                     <Web3Button />
                   </div>{' '}
                 </div>
