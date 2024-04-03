@@ -3,7 +3,7 @@ const nextConfig = {
   experimental: {
     appDir: true,
   },
-  // assetPrefix: 'https://openmesh-pythia.vercel.app',
+  assetPrefix: 'https://openmesh-pythia.vercel.app',
 }
 
 module.exports = nextConfig
