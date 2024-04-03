@@ -247,7 +247,7 @@ const ChatPage = (id: any) => {
                               : ''
                           }/images/pythia/thumb-down-filled.svg`}
                           alt="image"
-                          className="mt-[2px] w-[17px]"
+                          className="mt-[2px] w-[16.5px]"
                           onMouseEnter={() => setIsInfoThumbDown(input.id)}
                           onMouseLeave={() => setIsInfoThumbDown(null)}
                           onClick={() => {
