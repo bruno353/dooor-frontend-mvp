@@ -167,7 +167,7 @@ const ChatPage = (id: any) => {
   // Render chat messages
   const renderChatMessages = () => {
     return (
-      <div className="mb-[50px] grid gap-y-[0px] overflow-hidden overflow-y-auto scrollbar-thin scrollbar-track-[#1D2144] scrollbar-thumb-[#c5c4c4] scrollbar-track-rounded-md scrollbar-thumb-rounded-md ">
+      <div className="mb-[50px] grid gap-y-[0px] overflow-hidden overflow-y-auto scrollbar-thin scrollbar-track-[#F9F9F9] scrollbar-thumb-[#c5c4c4]">
         {pythiaChat?.PythiaInputs.map((input, index) => (
           <div
             key={index}
