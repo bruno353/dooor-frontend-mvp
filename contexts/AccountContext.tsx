@@ -69,6 +69,9 @@ interface CreateUserContextProps {
   finalBuild: boolean
   setFinalBuild: (value: boolean) => void
 
+  sidebarOpen: boolean
+  setSidebarOpen: (value: boolean) => void
+
   isWorkspace: boolean
   setIsWorkspace: (value: boolean) => void
 
@@ -119,6 +122,7 @@ export default function AccountContextProvider({
   const [finalNodes, setFinalNodes] = useState<any>()
   const [next, setNext] = useState<boolean>(false)
   const [finalBuild, setFinalBuild] = useState<boolean>(false)
+  const [sidebarOpen, setSidebarOpen] = useState<boolean>(false)
   const [nextFromScratch, setNextFromScratch] = useState<boolean>(false)
   const [reviewYourBuild, setReviewYourBuild] = useState<boolean>(false)
   const [connections, setConnections] = useState<boolean>(false)
@@ -152,6 +156,8 @@ export default function AccountContextProvider({
         setPythiaChat,
         next,
         setNext,
+        sidebarOpen,
+        setSidebarOpen,
         updateDataNode,
         setUpdateDataNode,
         nextFromScratch,

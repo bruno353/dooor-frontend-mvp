@@ -171,7 +171,7 @@ const ChatPage = (id: any) => {
         {pythiaChat?.PythiaInputs.map((input, index) => (
           <div
             key={index}
-            className={`mx-auto mb-4 grid w-[1000px] max-w-[1000px] gap-y-[40px] text-[16px] text-[#000] ${
+            className={`mx-auto mb-4 grid gap-y-[40px] text-[16px] text-[#000] md:w-[1000px] md:max-w-[1000px] ${
               index > 0 && 'mt-[20px]'
             }`}
           >
@@ -277,11 +277,11 @@ const ChatPage = (id: any) => {
 
   return (
     <>
-      <div className="flex h-full max-h-[calc(100vh-6rem)] flex-1 flex-col justify-between px-[50px]  pb-16 text-[16px] text-[#C5C4C4] md:pb-20  lg:pb-8  2xl:text-[18px]">
-        <div className="mt-auto flex h-full w-full flex-col rounded-xl bg-[#F9F9F9] px-[40px] pb-[50px] pt-[40px] shadow-md">
+      <div className="mt-10 flex h-full max-h-[calc(100vh-6rem)] flex-1 flex-col justify-between px-[10px] pb-8 text-[16px] text-[#C5C4C4]  md:mt-0 md:max-h-[calc(100vh-6rem)] md:px-[50px] md:pb-20  lg:pb-8  2xl:text-[18px]">
+        <div className="mt-auto flex h-full w-full flex-col rounded-xl bg-[#F9F9F9] px-[20px] pb-[50px] pt-[40px] shadow-md md:px-[40px]">
           {renderChatMessages()}
 
-          <div className="mt-auto flex  w-full px-[40px]">
+          <div className="mt-auto flex  w-full md:px-[40px]">
             {isLoading && (
               <svg
                 className="mt-1 animate-spin"

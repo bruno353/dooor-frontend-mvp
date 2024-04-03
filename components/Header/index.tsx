@@ -30,6 +30,9 @@ const Header = () => {
   const navbarToggleHandler = () => {
     setNavbarOpen(!navbarOpen)
   }
+  const sidebarToggleHandler = () => {
+    setSidebarOpen(!sidebarOpen)
+  }
   const [isEditing, setIsEditing] = useState(false)
   const [isViewing, setIsViewing] = useState(false)
   const pathname = usePathname()
@@ -71,6 +74,8 @@ const Header = () => {
     xnodeType,
     setFinalNodes,
     setUpdateDataNode,
+    sidebarOpen,
+    setSidebarOpen,
   } = useContext(AccountContext)
 
   // submenu handler
@@ -438,6 +443,28 @@ const Header = () => {
                 </div>
               )}
             </div>
+            <button
+              onClick={sidebarToggleHandler}
+              id="navbarToggler"
+              aria-label="Mobile Menu"
+              className="absolute left-4 top-1 block  rounded-lg px-3 py-[6px] ring-primary focus:ring-2"
+            >
+              <span
+                className={`relative my-1.5 block h-0.5 w-[30px] bg-black transition-all duration-300  ${
+                  sidebarOpen ? ' top-[7px] rotate-45' : ' '
+                }`}
+              />
+              <span
+                className={`relative my-1.5 block h-0.5 w-[15px] bg-black transition-all duration-300 ${
+                  sidebarOpen ? 'w-[30px] opacity-0' : ' '
+                }`}
+              />
+              <span
+                className={`relative my-1.5 block h-0.5 w-[10px] bg-black transition-all duration-300  ${
+                  sidebarOpen ? ' top-[-8px] w-[30px] -rotate-45' : ' '
+                }`}
+              />
+            </button>
             <button
               onClick={navbarToggleHandler}
               id="navbarToggler"

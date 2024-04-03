@@ -24,8 +24,8 @@ import {
 const Sidebar = ({ onValueChange }) => {
   const [categoriesOptions, setCategoriesOptions] = useState([])
   const [presetId, setPresetId] = useState(0)
-  const { user, pythiaChat, pythiaUpdated } = useContext(AccountContext)
-  const [isOpen, setIsOpen] = useState<boolean>(false)
+  const { user, pythiaChat, pythiaUpdated, sidebarOpen, setSidebarOpen } =
+    useContext(AccountContext)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [pythiaChats, setPythiaChats] = useState<PythiaChatProps[]>()
   const [isChatMenuOpen, setIsChatMenuOpen] = useState<PythiaChatProps | null>()
@@ -273,19 +273,19 @@ const Sidebar = ({ onValueChange }) => {
   return (
     <>
       <div
-        onMouseLeave={() => setIsOpen(false)}
-        onMouseEnter={() => setIsOpen(true)}
-        className="relative !z-10 h-full shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)]"
+        onMouseLeave={() => setSidebarOpen(false)}
+        onMouseEnter={() => setSidebarOpen(true)}
+        className="relative !z-10 h-full !bg-white shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)]"
       >
         <div
-          className={`!z-20 flex  flex-col items-start ${
-            isOpen ? 'w-[280px]' : 'w-[150px]'
+          className={`!z-20 flex  flex-col items-start !bg-white ${
+            sidebarOpen ? 'w-full md:w-[280px]' : 'hidden md:flex md:w-[150px]'
           }`}
         >
-          <div className="mb-[14.5px] mt-[24.5px] ml-[16px]  flex flex-row items-center  justify-between lg:mt-[49px] lg:mb-[29px] lg:ml-[32px]">
+          <div className="mb-[14.5px] mt-[24.5px] ml-[16px]  flex flex-row items-center  justify-between !bg-white lg:mt-[49px] lg:mb-[29px] lg:ml-[32px]">
             <div className="absolute top-[46px] flex w-[10.5px] cursor-pointer flex-col items-center lg:top-[38px] lg:w-[21.5px]">
               <img
-                onClick={() => setIsOpen(false)}
+                onClick={() => setSidebarOpen(false)}
                 src={`${
                   process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
                     ? process.env.NEXT_PUBLIC_BASE_PATH
@@ -308,7 +308,9 @@ const Sidebar = ({ onValueChange }) => {
                       : ''
                   }/images/logo/pythia.svg`}
                   alt="image"
-                  className={`w-[40px] lg:w-[300px] ${isOpen ? '' : 'hidden'}`}
+                  className={`w-[40px] lg:w-[300px] ${
+                    sidebarOpen ? '' : 'hidden'
+                  }`}
                 />
               </a>
             </div>
@@ -321,7 +323,7 @@ const Sidebar = ({ onValueChange }) => {
                 }/images/logo/search.svg`}
                 alt="image"
               />
-              {isOpen && (
+              {sidebarOpen && (
                 <input
                   value={inputValue}
                   onChange={(e) => {
@@ -374,7 +376,9 @@ const Sidebar = ({ onValueChange }) => {
                                         console.log(pythiaChatName)
                                       }}
                                       className={`cursor-pointer overflow-hidden bg-white ${
-                                        isOpen ? 'w-[240px]' : 'max-w-[110px]'
+                                        sidebarOpen
+                                          ? 'w-[240px]'
+                                          : 'max-w-[110px]'
                                       } truncate text-ellipsis whitespace-nowrap p-[10px]`}
                                       autoFocus
                                     />
@@ -385,7 +389,9 @@ const Sidebar = ({ onValueChange }) => {
                                           ? 'bg-[#e2e2e25d]'
                                           : ''
                                       } cursor-pointer overflow-hidden ${
-                                        isOpen ? 'w-[240px]' : 'max-w-[110px]'
+                                        sidebarOpen
+                                          ? 'w-[240px]'
+                                          : 'max-w-[110px]'
                                       } truncate text-ellipsis whitespace-nowrap p-[10px]`}
                                       onClick={() => {
                                         sendToChat(chat.id)
