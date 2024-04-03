@@ -8,7 +8,11 @@ import dynamic from 'next/dynamic'
 import 'react-quill/dist/quill.snow.css' // import styles
 import './react-quill.css'
 import nookies, { parseCookies, setCookie } from 'nookies'
-import { getUserChat, inputUserChatMessage } from '@/utils/api-pythia'
+import {
+  getUserChat,
+  inputUserChatMessage,
+  insertBadFeedback,
+} from '@/utils/api-pythia'
 import { AccountContext } from '@/contexts/AccountContext'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
@@ -52,18 +56,18 @@ const ChatPage = (id: any) => {
 
   async function handleCreateNewInput() {
     const { userSessionToken } = parseCookies()
-    const tempId = Date.now() // Usando timestamp como ID temporário
+    const tempId = Date.now()
 
     if (!newMessageHtml || newMessageHtml.length === 0) {
       return
     }
 
-    // Adicionando a mensagem do usuário ao chat imediatamente
     const newUserInput = {
       id: tempId.toString(),
       userMessage: newMessageHtml,
       response: '!$loading!$',
-      pythiaChatId: id.id, // Asumindo que este é o ID correto para pythiaChatId
+      pythiaChatId: id.id,
+      badResponseFeedback: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }
@@ -95,6 +99,32 @@ const ChatPage = (id: any) => {
     }
   }
 
+  async function insertBadFeedbackInput(inputId: string) {
+    const { userSessionToken } = parseCookies()
+
+    setIsLoading(true)
+    const chatPythiaNew = { ...pythiaChat }
+    const inputIndex = chatPythiaNew.PythiaInputs.findIndex(
+      (pinput) => pinput.id === inputId,
+    )
+    chatPythiaNew.PythiaInputs[inputIndex].badResponseFeedback = true
+
+    setPythiaChat(chatPythiaNew)
+
+    const data = {
+      id: inputId,
+      isBadResponse: true,
+    }
+
+    try {
+      await insertBadFeedback(data, userSessionToken)
+    } catch (err) {
+      console.log(err)
+      toast.error(`Error: ${err.response.data.message}`)
+    }
+    setIsLoading(false)
+  }
+
   function newMessageSave() {
     if (!isLoading) {
       handleCreateNewInput()
@@ -117,17 +147,17 @@ const ChatPage = (id: any) => {
   }
 
   useEffect(() => {
-    // Adiciona o event listener
     document.addEventListener('keydown', handleKeyPress)
 
-    // Remove o event listener quando o componente é desmontado
     return () => {
       document.removeEventListener('keydown', handleKeyPress)
     }
   }, [newMessageHtml])
 
   useEffect(() => {
-    scrollToBottomInstant()
+    if (!isLoading) {
+      scrollToBottomInstant()
+    }
   }, [pythiaChat])
 
   useEffect(() => {
@@ -194,17 +224,38 @@ const ChatPage = (id: any) => {
                   <div>
                     <div className="mb-2">{input.response}</div>
                     <div className="relative">
-                      <img
-                        src={`${
-                          process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-                            ? process.env.NEXT_PUBLIC_BASE_PATH
-                            : ''
-                        }/images/pythia/thumb-down.svg`}
-                        alt="image"
-                        className="mt-[2px] w-[17px] cursor-pointer"
-                        onMouseEnter={() => setIsInfoThumbDown(input.id)}
-                        onMouseLeave={() => setIsInfoThumbDown(null)}
-                      />
+                      {!input.badResponseFeedback ? (
+                        <img
+                          src={`${
+                            process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
+                              ? process.env.NEXT_PUBLIC_BASE_PATH
+                              : ''
+                          }/images/pythia/thumb-down.svg`}
+                          alt="image"
+                          className="mt-[2px] w-[17px] cursor-pointer"
+                          onMouseEnter={() => setIsInfoThumbDown(input.id)}
+                          onMouseLeave={() => setIsInfoThumbDown(null)}
+                          onClick={() => {
+                            insertBadFeedbackInput(input.id)
+                          }}
+                        />
+                      ) : (
+                        <img
+                          src={`${
+                            process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
+                              ? process.env.NEXT_PUBLIC_BASE_PATH
+                              : ''
+                          }/images/pythia/thumb-down-filled.svg`}
+                          alt="image"
+                          className="mt-[2px] w-[17px]"
+                          onMouseEnter={() => setIsInfoThumbDown(input.id)}
+                          onMouseLeave={() => setIsInfoThumbDown(null)}
+                          onClick={() => {
+                            insertBadFeedbackInput(input.id)
+                          }}
+                        />
+                      )}
+
                       <div
                         className={`absolute translate-y-2 rounded-md bg-[#000] px-4 py-1 text-sm text-[#fff] ${
                           isInfoThumbDown === input.id ? '' : 'hidden'

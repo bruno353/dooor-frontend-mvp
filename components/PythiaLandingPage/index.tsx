@@ -53,6 +53,7 @@ const PythiaLandingPage = () => {
       userMessage: newMessageHtml,
       response: '!$loading!$',
       pythiaChatId: 'id.id',
+      badResponseFeedback: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }
@@ -72,6 +73,7 @@ const PythiaLandingPage = () => {
         name: '',
         openmeshExpertUserId: 'id.id',
         PythiaInputs: [newUserInput],
+        badResponseFeedback: false,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       }
@@ -102,18 +104,18 @@ const PythiaLandingPage = () => {
   async function handleCreateChat() {
     console.log('fui chamado')
     const { userSessionToken } = parseCookies()
-    const tempId = Date.now() // Usando timestamp como ID temporário
+    const tempId = Date.now()
 
     if (!newMessageHtml || newMessageHtml.length === 0) {
       return
     }
 
-    // Adicionando a mensagem do usuário ao chat imediatamente
     const newUserInput = {
       id: tempId.toString(),
       userMessage: newMessageHtml,
       response: '!$loading!$',
-      pythiaChatId: 'id.id', // Asumindo que este é o ID correto para pythiaChatId
+      pythiaChatId: 'id.id',
+      badResponseFeedback: false,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }

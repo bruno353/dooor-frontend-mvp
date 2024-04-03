@@ -3,6 +3,7 @@ export interface PythiaInputProps {
   userMessage: string
   response: string
   pythiaChatId: string
+  badResponseFeedback: boolean
   createdAt: string
   updatedAt: string
 }
