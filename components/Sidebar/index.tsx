@@ -275,15 +275,17 @@ const Sidebar = ({ onValueChange }) => {
       <div
         onMouseLeave={() => setSidebarOpen(false)}
         onMouseEnter={() => setSidebarOpen(true)}
-        className="relative !z-10 h-full !bg-white shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)]"
+        className={`relative !z-10 mt-[50px] h-full !bg-white shadow-[0_4px_4px_0px_rgba(0,0,0,0.25)] md:mt-0 md:!block ${
+          !sidebarOpen && 'hidden'
+        }`}
       >
         <div
           className={`!z-20 flex  flex-col items-start !bg-white ${
-            sidebarOpen ? 'w-full md:w-[280px]' : 'hidden md:flex md:w-[150px]'
+            sidebarOpen ? 'w-[300px] md:w-[280px]' : 'md:flex md:w-[150px]'
           }`}
         >
           <div className="mb-[14.5px] mt-[24.5px] ml-[16px]  flex flex-row items-center  justify-between !bg-white lg:mt-[49px] lg:mb-[29px] lg:ml-[32px]">
-            <div className="absolute top-[46px] flex w-[10.5px] cursor-pointer flex-col items-center lg:top-[38px] lg:w-[21.5px]">
+            <div className="absolute top-[10px] flex w-[10.5px] cursor-pointer flex-col items-center lg:top-[38px] lg:w-[21.5px]">
               <img
                 onClick={() => setSidebarOpen(false)}
                 src={`${
@@ -291,6 +293,7 @@ const Sidebar = ({ onValueChange }) => {
                     ? process.env.NEXT_PUBLIC_BASE_PATH
                     : ''
                 }/images/lateralNavBar/nav.svg`}
+                className="hidden md:block"
                 alt="image"
               />
               <a
@@ -299,7 +302,7 @@ const Sidebar = ({ onValueChange }) => {
                     ? `/pythia/`
                     : '/'
                 }`}
-                className="absolute -top-[8px] left-[15px] flex w-[50px] cursor-pointer flex-col items-center lg:-top-[22px] lg:left-[50px] lg:w-[100px] "
+                className="absolute -top-[8px] left-[0px] flex w-[100px] cursor-pointer flex-col items-center lg:-top-[22px] lg:left-[50px] lg:w-[100px] "
               >
                 <img
                   src={`${
@@ -308,19 +311,20 @@ const Sidebar = ({ onValueChange }) => {
                       : ''
                   }/images/logo/pythia.svg`}
                   alt="image"
-                  className={`w-[40px] lg:w-[300px] ${
+                  className={`w-[100px] md:w-[40px] lg:w-[300px] ${
                     sidebarOpen ? '' : 'hidden'
                   }`}
                 />
               </a>
             </div>
-            <div className="absolute top-[14px] flex h-[25px] w-[10.5px] items-center gap-x-[20px] lg:top-[92px] lg:w-[21.5px]">
+            <div className="absolute top-[60px] flex h-[25px] w-[10.5px] items-center gap-x-[20px] lg:top-[92px] lg:w-[21.5px]">
               <img
                 src={`${
                   process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
                     ? process.env.NEXT_PUBLIC_BASE_PATH
                     : ''
                 }/images/logo/search.svg`}
+                className="hidden md:block"
                 alt="image"
               />
               {sidebarOpen && (
@@ -330,7 +334,7 @@ const Sidebar = ({ onValueChange }) => {
                     setInputValue(e.target.value)
                   }}
                   placeholder="Search chat"
-                  className="h-[25px] w-[160px] rounded-[5px] border border-[#9e9e9e50] bg-transparent px-2 text-[13px] text-[#000] placeholder-body-color outline-none focus:border-primary"
+                  className="h-[25px] w-[200px] rounded-[5px] border border-[#9e9e9e50] bg-transparent px-2 text-[13px] text-[#000] placeholder-body-color outline-none focus:border-primary md:w-[160px]"
                 />
               )}
             </div>

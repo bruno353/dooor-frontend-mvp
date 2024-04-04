@@ -30,26 +30,6 @@ const Header = () => {
   const navbarToggleHandler = () => {
     setNavbarOpen(!navbarOpen)
   }
-  const sidebarToggleHandler = () => {
-    setSidebarOpen(!sidebarOpen)
-  }
-  const [isEditing, setIsEditing] = useState(false)
-  const [isViewing, setIsViewing] = useState(false)
-  const pathname = usePathname()
-  const isFAQPage = pathname.includes('/faqs')
-  const { push } = useRouter()
-
-  const cookies = parseCookies()
-  const userHasAnyCookie = cookies.userSessionToken
-  const userNavbarRef = useRef(null)
-
-  const tagsOptions = [
-    'Decentralized data infrastructure',
-    'Dapps',
-    'Analysis engine',
-    'Research and development',
-    'Validator',
-  ]
 
   const {
     user,
@@ -77,6 +57,28 @@ const Header = () => {
     sidebarOpen,
     setSidebarOpen,
   } = useContext(AccountContext)
+
+  const sidebarToggleHandler = () => {
+    setSidebarOpen(!sidebarOpen)
+  }
+
+  const [isEditing, setIsEditing] = useState(false)
+  const [isViewing, setIsViewing] = useState(false)
+  const pathname = usePathname()
+  const isFAQPage = pathname.includes('/faqs')
+  const { push } = useRouter()
+
+  const cookies = parseCookies()
+  const userHasAnyCookie = cookies.userSessionToken
+  const userNavbarRef = useRef(null)
+
+  const tagsOptions = [
+    'Decentralized data infrastructure',
+    'Dapps',
+    'Analysis engine',
+    'Research and development',
+    'Validator',
+  ]
 
   // submenu handler
   const [openIndex, setOpenIndex] = useState(-1)

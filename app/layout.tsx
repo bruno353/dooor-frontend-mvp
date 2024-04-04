@@ -7,8 +7,6 @@ import '../styles/index.css'
 import { Providers } from './providers'
 import Header from '@/components/Header'
 import Sidebar from '@/components/Sidebar'
-import { useContext } from 'react'
-import { AccountContext } from '@/contexts/AccountContext'
 
 export default function RootLayout({
   children,
@@ -16,7 +14,6 @@ export default function RootLayout({
   // eslint-disable-next-line no-undef
   children: React.ReactNode
 }) {
-  const { sidebarOpen } = useContext(AccountContext)
   return (
     <html suppressHydrationWarning lang="en">
       {/*
@@ -28,12 +25,10 @@ export default function RootLayout({
       <body className="max-w-screen w-full bg-white">
         <Providers>
           <div className="flex">
-            <div className={`z-50 h-[calc(100vh)] w-full md:w-fit md:flex-shrink-0 ${!sidebarOpen ? 'hidden' : 'w-full'}`}>
+            <div className="z-10 h-[calc(100vh)] flex-shrink-0 md:z-50">
               <Sidebar onValueChange={console.log('')} />
             </div>
-            <div
-              className={`mx-auto md:flex-grow ${sidebarOpen && 'hidden md:flex-grow'}`}
-            >
+            <div className="z-50 mx-auto flex-grow md:z-10">
               <Header />
               {children}
             </div>

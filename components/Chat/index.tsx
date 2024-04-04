@@ -28,7 +28,8 @@ const ChatPage = (id: any) => {
   const [newMessageHtml, setNewMessageHtml] = useState('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [isInfoThumbDown, setIsInfoThumbDown] = useState<string | null>(null)
-  const { user, setPythiaChat, pythiaChat } = useContext(AccountContext)
+  const { user, setPythiaChat, pythiaChat, sidebarOpen } =
+    useContext(AccountContext)
 
   function handleChangeNewMessage(value) {
     if (newMessageHtml.length < 5000) {
@@ -277,7 +278,11 @@ const ChatPage = (id: any) => {
 
   return (
     <>
-      <div className="mt-10 flex h-full max-h-[calc(100vh-6rem)] flex-1 flex-col justify-between px-[10px] pb-8 text-[16px] text-[#C5C4C4]  md:mt-0 md:max-h-[calc(100vh-6rem)] md:px-[50px] md:pb-20  lg:pb-8  2xl:text-[18px]">
+      <div
+        className={`mt-10 h-full max-h-[calc(100vh-6rem)] flex-1 flex-col justify-between px-[10px] pb-8 text-[16px] text-[#C5C4C4] md:mt-0  md:!flex md:max-h-[calc(100vh-6rem)] md:px-[50px] md:pb-20  lg:pb-8  2xl:text-[18px] ${
+          sidebarOpen && 'hidden'
+        }`}
+      >
         <div className="mt-auto flex h-full w-full flex-col rounded-xl bg-[#F9F9F9] px-[20px] pb-[50px] pt-[40px] shadow-md md:px-[40px]">
           {renderChatMessages()}
 
