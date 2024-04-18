@@ -13,6 +13,7 @@ import {
   getUserChat,
   inputNonUserChatMessage,
   inputUserChatMessage,
+  insertBadFeedback,
 } from '@/utils/api-pythia'
 import { AccountContext } from '@/contexts/AccountContext'
 import { toast } from 'react-toastify'
@@ -29,6 +30,7 @@ const QuillNoSSRWrapper = dynamic(import('react-quill'), {
 const PythiaLandingPage = () => {
   const [newMessageHtml, setNewMessageHtml] = useState('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [isInfoThumbDown, setIsInfoThumbDown] = useState<string | null>(null)
   const { user, setPythiaChat, pythiaChat, pythiaUpdated, setPythiaUpdated } =
     useContext(AccountContext)
   const { push } = useRouter()
@@ -189,6 +191,32 @@ const PythiaLandingPage = () => {
     scrollToBottomInstant()
   }, [pythiaChat])
 
+  async function insertBadFeedbackInput(inputId: string) {
+    const { userSessionToken } = parseCookies()
+
+    setIsLoading(true)
+    const chatPythiaNew = { ...pythiaChat }
+    const inputIndex = chatPythiaNew.PythiaInputs.findIndex(
+      (pinput) => pinput.id === inputId,
+    )
+    chatPythiaNew.PythiaInputs[inputIndex].badResponseFeedback = true
+
+    setPythiaChat(chatPythiaNew)
+
+    const data = {
+      id: inputId,
+      isBadResponse: true,
+    }
+
+    try {
+      await insertBadFeedback(data, userSessionToken)
+    } catch (err) {
+      console.log(err)
+      toast.error(`Error: ${err.response.data.message}`)
+    }
+    setIsLoading(false)
+  }
+
   // Render chat messages
   const renderChatMessages = () => {
     return (
@@ -196,7 +224,7 @@ const PythiaLandingPage = () => {
         {pythiaChat?.PythiaInputs.map((input, index) => (
           <div
             key={index}
-            className={`mx-auto mb-4 grid w-[1000px] max-w-[1000px] gap-y-[40px] text-[16px] text-[#000] ${
+            className={`mx-auto mb-4 grid gap-y-[40px] text-[16px] text-[#000] md:w-[1000px] md:max-w-[1000px] ${
               index > 0 && 'mt-[20px]'
             }`}
           >
@@ -225,7 +253,7 @@ const PythiaLandingPage = () => {
                     : ''
                 }/images/pythia/pythia-cube-logo.svg`}
                 alt="image"
-                className="mt-[2px]  w-[20px] xl:w-[25px]"
+                className="mt-[2px]  min-w-[20px] xl:min-w-[25px]"
               />
               <div>
                 <div className="text-[15px] font-semibold">Pythia</div>
@@ -246,7 +274,51 @@ const PythiaLandingPage = () => {
                     />
                   </svg>
                 ) : (
-                  <div className="">{input.response}</div>
+                  <div>
+                    <div className="mb-2">{input.response}</div>
+                    <div className="relative">
+                      {!input.badResponseFeedback ? (
+                        <img
+                          src={`${
+                            process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
+                              ? process.env.NEXT_PUBLIC_BASE_PATH
+                              : ''
+                          }/images/pythia/thumb-down.svg`}
+                          alt="image"
+                          className="mt-[2px] w-[17px] cursor-pointer"
+                          onMouseEnter={() => setIsInfoThumbDown(input.id)}
+                          onMouseLeave={() => setIsInfoThumbDown(null)}
+                          onClick={() => {
+                            insertBadFeedbackInput(input.id)
+                          }}
+                        />
+                      ) : (
+                        <img
+                          src={`${
+                            process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
+                              ? process.env.NEXT_PUBLIC_BASE_PATH
+                              : ''
+                          }/images/pythia/thumb-down-filled.svg`}
+                          alt="image"
+                          className="mt-[2px] w-[16.5px]"
+                          onMouseEnter={() => setIsInfoThumbDown(input.id)}
+                          onMouseLeave={() => setIsInfoThumbDown(null)}
+                        />
+                      )}
+
+                      <div
+                        className={`absolute  rounded-md bg-[#000] px-4 py-1 text-sm text-[#fff] ${
+                          isInfoThumbDown === input.id ? '' : '!hidden'
+                        } ${
+                          index === pythiaChat?.PythiaInputs.length - 1
+                            ? '-translate-y-14'
+                            : 'translate-y-2'
+                        }`}
+                      >
+                        Bad response
+                      </div>
+                    </div>
+                  </div>
                 )}
               </div>
             </div>
@@ -256,7 +328,6 @@ const PythiaLandingPage = () => {
       </div>
     )
   }
-
   return (
     <>
       <div className="mt-10 flex h-full max-h-[calc(100vh-6rem)] flex-1 flex-col justify-between px-[10px] pb-8 text-[16px] text-[#C5C4C4]  md:mt-0 md:max-h-[calc(100vh-6rem)] md:px-[50px] md:pb-20  lg:pb-8  2xl:text-[18px]">
