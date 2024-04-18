@@ -251,15 +251,16 @@ const ChatPage = (id: any) => {
                           className="mt-[2px] w-[16.5px]"
                           onMouseEnter={() => setIsInfoThumbDown(input.id)}
                           onMouseLeave={() => setIsInfoThumbDown(null)}
-                          onClick={() => {
-                            insertBadFeedbackInput(input.id)
-                          }}
                         />
                       )}
 
                       <div
-                        className={`absolute translate-y-2 rounded-md bg-[#000] px-4 py-1 text-sm text-[#fff] ${
-                          isInfoThumbDown === input.id ? '' : 'hidden'
+                        className={`absolute  rounded-md bg-[#000] px-4 py-1 text-sm text-[#fff] ${
+                          isInfoThumbDown === input.id ? '' : '!hidden'
+                        } ${
+                          index === pythiaChat?.PythiaInputs.length - 1
+                            ? '-translate-y-14'
+                            : 'translate-y-2'
                         }`}
                       >
                         Bad response
