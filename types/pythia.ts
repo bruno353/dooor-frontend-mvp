@@ -4,6 +4,7 @@ export interface PythiaInputProps {
   response: string
   pythiaChatId: string
   badResponseFeedback: boolean
+  chart?: string
   createdAt: string
   updatedAt: string
 }

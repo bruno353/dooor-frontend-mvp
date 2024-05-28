@@ -150,7 +150,8 @@ const Sidebar = ({ onValueChange }) => {
 
     if (
       pythiaChatNameRef?.current?.length === 0 ||
-      !pythiaChatNameRef.current
+      !pythiaChatNameRef.current ||
+      !pythiaChatRename
     ) {
       return
     }
