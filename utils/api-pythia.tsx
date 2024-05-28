@@ -26,7 +26,7 @@ export async function getUserChats(userSessionToken: string) {
 
 export async function createUserChat(data: any, userSessionToken: string) {
   const config = {
-    method: 'put' as 'put',
+    method: 'post' as 'post',
     url: `${process.env.NEXT_PUBLIC_API_BACKEND_BASE_URL}/pythia/functions/createUserChat`,
     headers: {
       'x-parse-application-id': `${process.env.NEXT_PUBLIC_API_BACKEND_KEY}`,
