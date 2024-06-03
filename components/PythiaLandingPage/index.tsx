@@ -22,6 +22,19 @@ import { getSanitizeText } from '@/utils/functions-chat'
 import { PythiaChatProps, PythiaInputProps } from '@/types/pythia'
 import { usePathname, useSearchParams, useRouter } from 'next/navigation'
 
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+} from "recharts";
+
 const QuillNoSSRWrapper = dynamic(import('react-quill'), {
   ssr: false,
   loading: () => <p>Loading ...</p>,
@@ -34,6 +47,11 @@ const PythiaLandingPage = () => {
   const { user, setPythiaChat, pythiaChat, pythiaUpdated, setPythiaUpdated } =
     useContext(AccountContext)
   const { push } = useRouter()
+
+  const stripHtml = (html) => {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    return doc.body.textContent || "";
+  };
 
   function handleChangeNewMessage(value) {
     if (newMessageHtml.length < 5000) {
@@ -86,7 +104,7 @@ const PythiaLandingPage = () => {
     }
 
     const data = {
-      userInput: newMessageHtml,
+      userInput: stripHtml(newMessageHtml),
     }
 
     try {
@@ -221,7 +239,29 @@ const PythiaLandingPage = () => {
   const renderChatMessages = () => {
     return (
       <div className="mb-[50px] grid gap-y-[0px] overflow-hidden overflow-y-auto scrollbar-thin scrollbar-track-[#F9F9F9] scrollbar-thumb-[#c5c4c4]">
-        {pythiaChat?.PythiaInputs.map((input, index) => (
+        {pythiaChat?.PythiaInputs.map((input, index) => {
+          console.log("getting pythia landing page");
+          
+          let parsedResponse;
+
+          try {
+            parsedResponse = JSON.parse(input.response);
+          } catch (e) {
+            console.error('Error parsing JSON response:', e);
+            parsedResponse = input.response; // Fallback if parsing fails
+          }
+
+          // Logging the parsed response for debugging
+          console.log('Parsed Response:', parsedResponse);
+          console.log('Input:', input);
+          
+          let data;
+
+          if (parsedResponse.data) {
+            data = parsedResponse.data
+          }
+
+          return (
           <div
             key={index}
             className={`mx-auto mb-4 grid gap-y-[40px] text-[16px] text-[#000] md:w-[1000px] md:max-w-[1000px] ${
@@ -275,7 +315,13 @@ const PythiaLandingPage = () => {
                   </svg>
                 ) : (
                   <div>
-                    <div className="mb-2">{input.response}</div>
+                    {/* <div className="mb-2">{input.response}</div> */}
+                    <div className="mb-2">{ parsedResponse.data ? (
+                      // <ResponsiveContainer width="100%" height={400}>
+                        // {eval(parsedResponse.rechartsCode)}
+                        parsedResponse.rechartsCode
+                      // {/* </ResponsiveContainer>                     */}
+                    ) : (parsedResponse.response) }</div>
                     <div className="relative">
                       {!input.badResponseFeedback ? (
                         <img
@@ -323,7 +369,7 @@ const PythiaLandingPage = () => {
               </div>
             </div>
           </div>
-        ))}
+        )})}
         <div ref={messagesEndRef} />
       </div>
     )
