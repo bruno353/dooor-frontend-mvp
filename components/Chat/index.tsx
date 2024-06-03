@@ -89,7 +89,16 @@ const ChatPage = (id: any) => {
     try {
       setNewMessageHtml('')
       const res = await inputUserChatMessage(data, userSessionToken)
+      // const json_res = JSON.parse(res.response)
       newUserInput.response = res.response
+      
+      // if (json_res.data) {
+      //   newUserInput.data = json_res.data
+      // }
+
+      // if (json_res.rechartsCode) {
+      //   newUserInput.rechartsCode = json_res.rechartsCode
+      // }
       const newInputToSet = [...inputs, newUserInput]
       const newChat = { ...chatPythiaNew }
       newChat.PythiaInputs = newInputToSet
@@ -98,6 +107,7 @@ const ChatPage = (id: any) => {
       console.log(err)
       toast.error(`Error: ${err.response.data.message}`)
     }
+    
   }
 
   async function insertBadFeedbackInput(inputId: string) {
@@ -167,111 +177,130 @@ const ChatPage = (id: any) => {
 
   // Render chat messages
   const renderChatMessages = () => {
+    console.log("renderChatMessages called");
     return (
       <div className="mb-[50px] grid gap-y-[0px] overflow-hidden overflow-y-auto scrollbar-thin scrollbar-track-[#F9F9F9] scrollbar-thumb-[#c5c4c4]">
-        {pythiaChat?.PythiaInputs.map((input, index) => (
-          <div
-            key={index}
-            className={`mx-auto mb-4 grid gap-y-[40px] text-[16px] text-[#000] md:w-[1000px] md:max-w-[1000px] ${
-              index > 0 && 'mt-[20px]'
-            }`}
-          >
-            <div className="flex items-start gap-x-[10px] text-left">
-              <img
-                src={`${
-                  process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-                    ? process.env.NEXT_PUBLIC_BASE_PATH
-                    : ''
-                }/images/lateralNavBar/profile2.svg`}
-                alt="image"
-                className="mt-[2px]  w-[15px] xl:w-[22px]"
-              />
-              <div className="">
-                <div className="text-[15px] font-semibold">You</div>
-                <div className="break-all">
-                  {getSanitizeText(input.userMessage)}
+        {pythiaChat?.PythiaInputs.map((input, index) => {
+
+          console.log("entering here");
+
+          let parsedResponse;
+
+          try {
+            parsedResponse = JSON.parse(input.response);
+          } catch (e) {
+            console.error('Error parsing JSON response:', e);
+            parsedResponse = input.response; // Fallback if parsing fails
+          }
+
+          // Logging the parsed response for debugging
+          console.log('Parsed Response:', parsedResponse);
+          console.log('Input:', input);
+
+          return (
+            <div
+              key={index}
+              className={`mx-auto mb-4 grid gap-y-[40px] text-[16px] text-[#000] md:w-[1000px] md:max-w-[1000px] ${
+                index > 0 && 'mt-[20px]'
+              }`}
+            >
+              <div className="flex items-start gap-x-[10px] text-left">
+                <img
+                  src={`${
+                    process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
+                      ? process.env.NEXT_PUBLIC_BASE_PATH
+                      : ''
+                  }/images/lateralNavBar/profile2.svg`}
+                  alt="image"
+                  className="mt-[2px]  w-[15px] xl:w-[22px]"
+                />
+                <div className="">
+                  <div className="text-[15px] font-semibold">You</div>
+                  <div className="break-all">
+                    {getSanitizeText(input.userMessage)}
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-start gap-x-[10px] text-left">
+                <img
+                  src={`${
+                    process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
+                      ? process.env.NEXT_PUBLIC_BASE_PATH
+                      : ''
+                  }/images/pythia/pythia-cube-logo.svg`}
+                  alt="image"
+                  className="mt-[2px]  min-w-[20px] xl:min-w-[25px]"
+                />
+                <div>
+                  <div className="text-[15px] font-semibold">Pythia</div>
+                  {input.response === '!$loading!$' ? (
+                    <svg
+                      className="mt-1 animate-spin "
+                      width="30px"
+                      height="30px"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M20.0001 12C20.0001 13.3811 19.6425 14.7386 18.9623 15.9405C18.282 17.1424 17.3022 18.1477 16.1182 18.8587C14.9341 19.5696 13.5862 19.9619 12.2056 19.9974C10.825 20.0328 9.45873 19.7103 8.23975 19.0612"
+                        stroke="#3253FE"
+                        strokeWidth="3.55556"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  ) : (
+                    <div>
+                      <div className="mb-2">{ parsedResponse.data ? ("data received") : ("data not received") } </div>
+                      <div className="relative">
+                        {!input.badResponseFeedback ? (
+                          <img
+                            src={`${
+                              process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
+                                ? process.env.NEXT_PUBLIC_BASE_PATH
+                                : ''
+                            }/images/pythia/thumb-down.svg`}
+                            alt="image"
+                            className="mt-[2px] w-[17px] cursor-pointer"
+                            onMouseEnter={() => setIsInfoThumbDown(input.id)}
+                            onMouseLeave={() => setIsInfoThumbDown(null)}
+                            onClick={() => {
+                              insertBadFeedbackInput(input.id)
+                            }}
+                          />
+                        ) : (
+                          <img
+                            src={`${
+                              process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
+                                ? process.env.NEXT_PUBLIC_BASE_PATH
+                                : ''
+                            }/images/pythia/thumb-down-filled.svg`}
+                            alt="image"
+                            className="mt-[2px] w-[16.5px]"
+                            onMouseEnter={() => setIsInfoThumbDown(input.id)}
+                            onMouseLeave={() => setIsInfoThumbDown(null)}
+                          />
+                        )}
+
+                        <div
+                          className={`absolute  rounded-md bg-[#000] px-4 py-1 text-sm text-[#fff] ${
+                            isInfoThumbDown === input.id ? '' : '!hidden'
+                          } ${
+                            index === pythiaChat?.PythiaInputs.length - 1
+                              ? '-translate-y-14'
+                              : 'translate-y-2'
+                          }`}
+                        >
+                          Bad response
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
-            <div className="flex items-start gap-x-[10px] text-left">
-              <img
-                src={`${
-                  process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-                    ? process.env.NEXT_PUBLIC_BASE_PATH
-                    : ''
-                }/images/pythia/pythia-cube-logo.svg`}
-                alt="image"
-                className="mt-[2px]  min-w-[20px] xl:min-w-[25px]"
-              />
-              <div>
-                <div className="text-[15px] font-semibold">Pythia</div>
-                {input.response === '!$loading!$' ? (
-                  <svg
-                    className="mt-1 animate-spin "
-                    width="30px"
-                    height="30px"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M20.0001 12C20.0001 13.3811 19.6425 14.7386 18.9623 15.9405C18.282 17.1424 17.3022 18.1477 16.1182 18.8587C14.9341 19.5696 13.5862 19.9619 12.2056 19.9974C10.825 20.0328 9.45873 19.7103 8.23975 19.0612"
-                      stroke="#3253FE"
-                      strokeWidth="3.55556"
-                      strokeLinecap="round"
-                    />
-                  </svg>
-                ) : (
-                  <div>
-                    <div className="mb-2">{input.response}</div>
-                    <div className="relative">
-                      {!input.badResponseFeedback ? (
-                        <img
-                          src={`${
-                            process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-                              ? process.env.NEXT_PUBLIC_BASE_PATH
-                              : ''
-                          }/images/pythia/thumb-down.svg`}
-                          alt="image"
-                          className="mt-[2px] w-[17px] cursor-pointer"
-                          onMouseEnter={() => setIsInfoThumbDown(input.id)}
-                          onMouseLeave={() => setIsInfoThumbDown(null)}
-                          onClick={() => {
-                            insertBadFeedbackInput(input.id)
-                          }}
-                        />
-                      ) : (
-                        <img
-                          src={`${
-                            process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-                              ? process.env.NEXT_PUBLIC_BASE_PATH
-                              : ''
-                          }/images/pythia/thumb-down-filled.svg`}
-                          alt="image"
-                          className="mt-[2px] w-[16.5px]"
-                          onMouseEnter={() => setIsInfoThumbDown(input.id)}
-                          onMouseLeave={() => setIsInfoThumbDown(null)}
-                        />
-                      )}
-
-                      <div
-                        className={`absolute  rounded-md bg-[#000] px-4 py-1 text-sm text-[#fff] ${
-                          isInfoThumbDown === input.id ? '' : '!hidden'
-                        } ${
-                          index === pythiaChat?.PythiaInputs.length - 1
-                            ? '-translate-y-14'
-                            : 'translate-y-2'
-                        }`}
-                      >
-                        Bad response
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        ))}
+          );
+        })}
         <div ref={messagesEndRef} />
       </div>
     )
