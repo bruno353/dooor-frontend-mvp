@@ -21,6 +21,8 @@ import 'react-toastify/dist/ReactToastify.css'
 import { getSanitizeText } from '@/utils/functions-chat'
 import { PythiaChatProps, PythiaInputProps } from '@/types/pythia'
 import { usePathname, useSearchParams, useRouter } from 'next/navigation'
+import DynamicChart from '../DynamicChart'; // Adjust the import path accordingly
+
 
 import {
   LineChart,
@@ -261,6 +263,19 @@ const PythiaLandingPage = () => {
             data = parsedResponse.data
           }
 
+        //   let test_code = `<LineChart data={[{"date": '1', "avg_vol_eth": 10}, {"date": '2', "avg_vol_eth": 20}]}>
+        //   <CartesianGrid strokeDasharray="3 3" />
+        //   <XAxis dataKey="date" />
+        //   <YAxis />
+        //   <Tooltip />
+        //   <Legend />
+        //   <Line type="monotone" dataKey="avg_vol_eth" stroke="#8884d8" />
+        // </LineChart>`
+
+        // let test_code = `<LineChart> </LineChart>`
+        let test_code = ``
+          // let test_data = 
+
           return (
           <div
             key={index}
@@ -318,8 +333,10 @@ const PythiaLandingPage = () => {
                     {/* <div className="mb-2">{input.response}</div> */}
                     <div className="mb-2">{ parsedResponse.data ? (
                       // <ResponsiveContainer width="100%" height={400}>
-                        // {eval(parsedResponse.rechartsCode)}
-                        parsedResponse.rechartsCode
+                      // (parsedResponse.rechartsCode),
+                      // <DynamicChart code={parsedResponse.rechartsCode} data={parsedResponse.data} />
+                      <DynamicChart code={test_code} data={parsedResponse.data} />
+                        // parsedResponse.rechartsCode
                       // {/* </ResponsiveContainer>                     */}
                     ) : (parsedResponse.response) }</div>
                     <div className="relative">
@@ -374,6 +391,7 @@ const PythiaLandingPage = () => {
       </div>
     )
   }
+
   return (
     <>
       <div className="mt-10 flex h-full max-h-[calc(100vh-6rem)] flex-1 flex-col justify-between px-[10px] pb-8 text-[16px] text-[#C5C4C4]  md:mt-0 md:max-h-[calc(100vh-6rem)] md:px-[50px] md:pb-20  lg:pb-8  2xl:text-[18px]">

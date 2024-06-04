@@ -126,7 +126,7 @@ const ChatPage = (id: any) => {
       id: inputId,
       isBadResponse: true,
     }
-
+  
     try {
       await insertBadFeedback(data, userSessionToken)
     } catch (err) {
