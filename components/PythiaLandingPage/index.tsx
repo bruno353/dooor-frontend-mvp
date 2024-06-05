@@ -263,7 +263,7 @@ const PythiaLandingPage = () => {
             data = parsedResponse.data
           }
 
-        //   let test_code = `<LineChart data={[{"date": '1', "avg_vol_eth": 10}, {"date": '2', "avg_vol_eth": 20}]}>
+        //   let test_code = `<LineChart data={[{date: 1, avg_vol_eth: 10}, {date: 2, avg_vol_eth: 20}]}>
         //   <CartesianGrid strokeDasharray="3 3" />
         //   <XAxis dataKey="date" />
         //   <YAxis />
@@ -273,7 +273,7 @@ const PythiaLandingPage = () => {
         // </LineChart>`
 
         // let test_code = `<LineChart> </LineChart>`
-        let test_code = ``
+        // let test_code = ``
           // let test_data = 
 
           return (

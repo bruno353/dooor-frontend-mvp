@@ -10,12 +10,61 @@ import { ResponsiveContainer, LineChart, Line, BarChart,
     Legend, } from 'recharts';
 import ReactJSXParser from 'react-jsx-parser';
 import Expr from 'react-expr';
+import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
+
 
 
 const DynamicChart = ({ code, data }) => {
   let RechartsComponent = null;
   console.log("code type of", code)
   console.log("data", data)
+
+  const scope = {
+    ResponsiveContainer,
+    LineChart,
+    Line,
+    BarChart,
+    Bar,
+    PieChart,
+    Pie,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Tooltip,
+    Legend,
+    data,
+  };
+
+
+//   const wrappedCode = `
+//     (function() {
+//       return (
+//         ${code}
+//       );
+//     })()
+//   `;
+//   const wrappedCode = `
+//     (() => {
+//         return (
+//         ${code}
+//         );
+//     })()
+//     `;
+  const wrappedCode = `
+    () => (
+        ${code}
+    )
+    `;
+//   const wrappedCode = `render(${code})`;
+
+  console.log("wrappedCode:", wrappedCode);
+
+  return (
+    <LiveProvider code={wrappedCode} scope={scope} noInline>
+      <LivePreview />
+      <LiveError />
+    </LiveProvider>
+  );
 
 //   try {
 //     // Wrap the JSX code in a function call
@@ -84,48 +133,48 @@ const DynamicChart = ({ code, data }) => {
 //       />
 //     </ResponsiveContainer>
 //   );
-  return (
-    <ResponsiveContainer width="100%" height={400}>
-        {/* <LineChart>
+//   return (
+//     <ResponsiveContainer width="100%" height={400}>
+//         {/* <LineChart>
             
-        </LineChart> */}
-      {/* <ReactJSXParser
-        components={{ ResponsiveContainer, LineChart, Line, BarChart,
-            Bar,
-            PieChart,
-            Pie,
-            XAxis,
-            YAxis,
-            CartesianGrid,
-            Tooltip,
-            Legend, }}
-        // bindings={{data: data}}
-        jsx={code}
-        renderInWrapper={false}
-        autoCloseVoidElements={true}
-        showWarnings={true}
-        // jsx={'<h1>YAY</h1>'}
-      /> */}
-      <Expr
-        components={{
-          ResponsiveContainer,
-          LineChart,
-          Line,
-          BarChart,
-          Bar,
-          PieChart,
-          Pie,
-          XAxis,
-          YAxis,
-          CartesianGrid,
-          Tooltip,
-          Legend,
-        }}
-        bindings={{ data }}
-        expr={code}
-      />
-    </ResponsiveContainer>
-  );
+//         </LineChart> */}
+//       {/* <ReactJSXParser
+//         components={{ ResponsiveContainer, LineChart, Line, BarChart,
+//             Bar,
+//             PieChart,
+//             Pie,
+//             XAxis,
+//             YAxis,
+//             CartesianGrid,
+//             Tooltip,
+//             Legend, }}
+//         // bindings={{data: data}}
+//         jsx={code}
+//         renderInWrapper={false}
+//         autoCloseVoidElements={true}
+//         showWarnings={true}
+//         // jsx={'<h1>YAY</h1>'}
+//       /> */}
+//       <Expr
+//         components={{
+//           ResponsiveContainer,
+//           LineChart,
+//           Line,
+//           BarChart,
+//           Bar,
+//           PieChart,
+//           Pie,
+//           XAxis,
+//           YAxis,
+//           CartesianGrid,
+//           Tooltip,
+//           Legend,
+//         }}
+//         bindings={{ data }}
+//         expr={code}
+//       />
+//     </ResponsiveContainer>
+//   );
 };
 
 export default DynamicChart;
