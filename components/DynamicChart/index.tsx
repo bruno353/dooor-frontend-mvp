@@ -20,10 +20,13 @@ import JsxParser from 'react-jsx-parser'
 import { LiveProvider, LiveEditor, LiveError, LivePreview } from 'react-live';
 
 
-const DynamicChart = ({ code, data }) => {
+const DynamicChart = ({ data, xkey, ykey }) => {
     let RechartsComponent = null;
-    console.log("code type of", code)
+    // console.log("code type of", code)
     console.log("data", data)
+    console.log("xkey", xkey)
+    console.log("ykey", ykey)
+
 
 //   const scope = {
 //     ResponsiveContainer,
@@ -147,24 +150,41 @@ const DynamicChart = ({ code, data }) => {
     };
 
     return (
-    // <ResponsiveContainer width="100%" height={400}>
-        {/* <JsxParser
-        components={{ 
-        LineChart,
-        Line,
-        XAxis,
-        YAxis,
-        CartesianGrid,
-        Tooltip,
-        Legend,
-        ResponsiveContainer }}
-        bindings={{data: data}}
-        // jsx={code}
-        jsx={'<h1>yay</h1>'}
-        showWarnings={true}
-        onError={handleError}
-        /> */}
-    // </ResponsiveContainer>
+        
+        <ResponsiveContainer width="100%" height={200}>
+            <LineChart
+                data={data}
+                margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                >
+                <CartesianGrid strokeDasharray="" />
+                <XAxis dataKey={xkey} />
+                <YAxis dataKey={ykey} />
+                <Tooltip />
+                {/* <Legend verticalAlign="top" wrapperStyle={{ lineHeight: "40px" }} /> */}
+                <Line
+                    type="monotone"
+                    dataKey={ykey}
+                    stroke="#8884d8"
+                    activeDot={{ r: 8 }}
+                />
+            </LineChart>
+                {/* <JsxParser
+                components={{ 
+                LineChart,
+                Line,
+                XAxis,
+                YAxis,
+                CartesianGrid,
+                Tooltip,
+                Legend,
+                ResponsiveContainer }}
+                bindings={{data: data}}
+                // jsx={code}
+                jsx={'<h1>yay</h1>'}
+                showWarnings={true}
+                onError={handleError}
+            /> */}
+        </ResponsiveContainer>  
     );
 };
 

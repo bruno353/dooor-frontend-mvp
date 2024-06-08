@@ -256,12 +256,13 @@ const PythiaLandingPage = () => {
           // Logging the parsed response for debugging
           console.log('Parsed Response:', parsedResponse);
           console.log('Input:', input);
+          console.log('data', parsedResponse.data)
           
-          let data;
+          // let data;
 
-          if (parsedResponse.data) {
-            data = parsedResponse.data
-          }
+          // if (parsedResponse.data) {
+          //   data = parsedResponse.data
+          // }
 
           let test_code = `<LineChart data={[{date: 1, avg_vol_eth: 10}, {date: 2, avg_vol_eth: 20}]}>
           <CartesianGrid strokeDasharray="3 3" />
@@ -332,13 +333,12 @@ const PythiaLandingPage = () => {
                   <div>
                     {/* <div className="mb-2">{input.response}</div> */}
                     <div className="mb-2">{ parsedResponse.data ? (
-                      // <ResponsiveContainer width="100%" height={400}>
-                      // (parsedResponse.rechartsCode),
-                      // <DynamicChart code={parsedResponse.rechartsCode} data={parsedResponse.data} />
-                      // <DynamicChart code={test_code} data={parsedResponse.data} />
-                        // data, parsedResponse.rechartsCode
-                        input.response
-                      // {/* </ResponsiveContainer>                     */}
+                      <div>
+                        <DynamicChart data={parsedResponse.data} xkey={parsedResponse.xkey} ykey={parsedResponse.ykey} />
+                        <div>
+                          {parsedResponse.response}
+                        </div>
+                      </div>
                     ) : (parsedResponse.response) }</div>
                     <div className="relative">
                       {!input.badResponseFeedback ? (
