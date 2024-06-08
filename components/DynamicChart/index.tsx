@@ -147,8 +147,8 @@ const DynamicChart = ({ code, data }) => {
     };
 
     return (
-    <ResponsiveContainer width="100%" height={400}>
-        <JsxParser
+    // <ResponsiveContainer width="100%" height={400}>
+        {/* <JsxParser
         components={{ 
         LineChart,
         Line,
@@ -163,8 +163,8 @@ const DynamicChart = ({ code, data }) => {
         jsx={'<h1>yay</h1>'}
         showWarnings={true}
         onError={handleError}
-        />
-    </ResponsiveContainer>
+        /> */}
+    // </ResponsiveContainer>
     );
 };
 

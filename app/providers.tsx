@@ -40,7 +40,7 @@ export function Providers({ children }: { children: React.ReactNode }) {
         </WagmiConfig>
       </AccountContextProvider>
 
-      <ToastContainer />
+      {/* <ToastContainer position=""/> */}
       <Web3Modal projectId={projectId} ethereumClient={ethereumClient} />
     </>
   )
