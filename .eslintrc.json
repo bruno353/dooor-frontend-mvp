@@ -3,6 +3,8 @@
   "rules": {
     "no-unused-vars": "off",
     "react-hooks/exhaustive-deps": "off",
-    "prettier/prettier": "off"
+    "prettier/prettier": "off",
+    "prefer-const": "off",
+    "camelcase": "off"
   }
 }
