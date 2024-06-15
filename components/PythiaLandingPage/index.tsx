@@ -442,6 +442,9 @@ const PythiaLandingPage = () => {
             />
           </div>
         </div>
+        <div style={{ display: 'flex', alignItems: 'center' }}>In collaboration with Deepfunding by SingularityNet
+         <img src="https://www.datacoinz.com/wp-content/uploads/2021/10/Singularity.png" style={{width: '20px', height: 'auto'}}/>
+        </div>
       </div>
     </>
   )
