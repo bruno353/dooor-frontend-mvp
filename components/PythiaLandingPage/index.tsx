@@ -21,6 +21,9 @@ import 'react-toastify/dist/ReactToastify.css'
 import { getSanitizeText } from '@/utils/functions-chat'
 import { PythiaChatProps, PythiaInputProps } from '@/types/pythia'
 import { usePathname, useSearchParams, useRouter } from 'next/navigation'
+import { ChevronDown } from 'lucide-react'
+import ModelSelector from './ModelSelector'
+import { useAccount } from 'wagmi'
 
 const QuillNoSSRWrapper = dynamic(import('react-quill'), {
   ssr: false,
@@ -34,12 +37,23 @@ const PythiaLandingPage = () => {
   const { user, setPythiaChat, pythiaChat, pythiaUpdated, setPythiaUpdated } =
     useContext(AccountContext)
   const { push } = useRouter()
+  const { address, isConnecting, isDisconnected } = useAccount()
 
   function handleChangeNewMessage(value) {
     if (newMessageHtml.length < 5000) {
       setNewMessageHtml(value)
     }
   }
+
+  const [placeholder, setPlaceholder] = useState(
+    'Connect wallet to start chatting',
+  )
+
+  useEffect(() => {
+    setPlaceholder(
+      address ? 'Type your query' : 'Connect wallet to start chatting',
+    )
+  }, [address])
 
   const messagesEndRef = useRef(null)
 
@@ -331,27 +345,27 @@ const PythiaLandingPage = () => {
   return (
     <>
       <div className="mt-10 flex h-full max-h-[calc(100vh-6rem)] flex-1 flex-col justify-between px-[10px] pb-8 text-[16px] text-[#C5C4C4]  md:mt-0 md:max-h-[calc(100vh-6rem)] md:px-[50px] md:pb-20  lg:pb-8  2xl:text-[18px]">
-        <div className="mt-auto flex h-full w-full flex-col rounded-xl bg-[#F9F9F9] px-[20px] pb-[50px] pt-[40px] shadow-md md:px-[40px]">
+        <div className="relative mt-auto flex h-full w-full flex-col rounded-xl bg-[#F9F9F9] px-[20px] pb-[50px] pt-[40px] shadow-md md:px-[40px]">
           {pythiaChat?.PythiaInputs?.length > 0 ? (
             renderChatMessages()
           ) : (
             <div className="mx-auto  mt-auto mb-32">
               <img
-                src={`${
-                  process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-                    ? process.env.NEXT_PUBLIC_BASE_PATH
-                    : ''
-                }/images/logo/pythia-cube.svg`}
+                src={`images/logo/dooor-logo.svg`}
                 alt="image"
                 className={`mx-auto w-[40px]`}
               />
               <div className="mt-5 text-xl font-semibold text-[#000]">
-                How can Pythia help you?
+                How can Dooor help you?
               </div>
             </div>
           )}
 
-          <div className="mt-auto flex  w-full md:px-[40px]">
+          <div
+            className={`relative mt-auto flex w-full md:px-[40px] ${
+              !address && 'cursor-not-allowed'
+            }`}
+          >
             {isLoading && (
               <svg
                 className="mt-1 animate-spin"
@@ -366,15 +380,24 @@ const PythiaLandingPage = () => {
               </svg>
             )}{' '}
             <QuillNoSSRWrapper
-              readOnly={isLoading}
+              key={address ? 'connected' : 'disconnected'} // Adicionar esta linha
+              readOnly={isLoading || !address}
               value={newMessageHtml}
               onChange={(e) => {
                 handleChangeNewMessage(e)
               }}
               // disabled={isLoading}
-              className="my-quill mx-auto mt-2 w-full max-w-[900px] rounded-md border-[1px] border-[#EAEAEA] bg-[#fff] bg-[#787ca536] text-base font-normal text-[#fff] outline-0 2xl:max-w-[1000px]"
-              placeholder="Type your query"
+              className={`my-quill mx-auto mt-2 w-full max-w-[900px] rounded-md border-[1px] border-[#EAEAEA] bg-[#fff] bg-[#787ca536] text-base font-normal text-[#fff] outline-0 2xl:max-w-[1000px] ${
+                !address && 'pointer-events-none'
+              }`}
+              placeholder={
+                address ? 'Type your query' : 'Connect wallet to start chatting'
+              }
             />
+          </div>
+          <div className="absolute top-2 left-2 text-black">
+            {' '}
+            <ModelSelector />
           </div>
         </div>
       </div>

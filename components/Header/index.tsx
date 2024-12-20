@@ -11,15 +11,11 @@ import axios from 'axios'
 import { AccountContext } from '../../contexts/AccountContext'
 import { usePathname, useSearchParams, useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
-import { useAccount, useNetwork } from 'wagmi'
 import 'react-toastify/dist/ReactToastify.css'
-import {
-  useWeb3ModalTheme,
-  Web3NetworkSwitch,
-  Web3Button,
-} from '@web3modal/react'
+
 import { hashObject } from '@/utils/functions'
-import { signMessage, disconnect } from '@wagmi/core'
+import { ConnectKitButton } from 'connectkit'
+import { useAccount } from 'wagmi'
 
 const Header = () => {
   // Navbar toggle
@@ -98,7 +94,6 @@ const Header = () => {
   function signOutUser() {
     destroyCookie(undefined, 'userSessionToken')
     setUser(null)
-    disconnect()
     window.location.reload()
   }
 
@@ -306,7 +301,7 @@ const Header = () => {
     return dado
   }
 
-  const { address } = useAccount()
+  const { address, isConnecting, isDisconnected } = useAccount()
 
   useEffect(() => {
     async function getWeb3Login() {
@@ -319,10 +314,10 @@ const Header = () => {
           console.log('message to hash')
           console.log(hash)
           const finalHash = `0x${hash}`
-          const signature = await signMessage({
-            message: finalHash,
-          })
-          const res = await loginWeb3User(address, signature)
+          // const signature = await signMessage({
+          //   message: finalHash,
+          // })
+          const res = await loginWeb3User(address, `signature`)
           setCookie(null, 'userSessionToken', res.sessionToken)
           nookies.set(null, 'userSessionToken', res.sessionToken)
           setUser(res)
@@ -498,7 +493,7 @@ const Header = () => {
               }`}
             >
               <div className=" grid gap-y-[15px] text-[12px]  font-medium !leading-[19px]">
-                <div className="my-auto grid gap-y-[20px] text-center md:justify-center">
+                <div className="my-auto grid gap-y-[20px] text-center text-black/80 md:justify-center">
                   {headerItens.map((option, index) => (
                     <a
                       key={index}
@@ -739,20 +734,20 @@ const Header = () => {
                 </div>
               ) : (
                 <div className="flex items-center">
-                  <a
-                    href={`${
-                      process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-                        ? `/pythia/login`
-                        : `${'/login'}`
-                    }`}
-                    className=" my-auto h-fit cursor-pointer items-center  bg-transparent text-[16px]  font-bold !leading-[19px] text-[#000] hover:text-[#3b3a3a]"
-                  >
-                    <div>Login</div>
-                  </a>
-                  <div className="mx-[10px] text-[#3D3D3D]">or</div>
-                  <div className="">
-                    <Web3Button />
-                  </div>{' '}
+                  <ConnectKitButton.Custom>
+                    {({ isConnected, show, truncatedAddress, ensName }) => {
+                      return (
+                        <button
+                          onClick={show}
+                          className="rounded-md border-[1px] border-black/40 bg-white px-3 py-1 text-sm font-medium text-black/80 hover:bg-gray/10 "
+                        >
+                          {isConnected
+                            ? ensName ?? truncatedAddress
+                            : 'Connect Wallet'}
+                        </button>
+                      )
+                    }}
+                  </ConnectKitButton.Custom>{' '}
                 </div>
               )}
             </div>

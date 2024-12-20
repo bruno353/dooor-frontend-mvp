@@ -282,7 +282,7 @@ const Sidebar = ({ onValueChange }) => {
       >
         <div
           className={`!z-20 flex  flex-col items-start !bg-white ${
-            sidebarOpen ? 'w-[300px] md:w-[280px]' : 'md:flex md:w-[150px]'
+            sidebarOpen ? 'w-[300px] md:w-[280px]' : 'md:flex md:w-[100px]'
           }`}
         >
           <div className="mb-[14.5px] mt-[24.5px] ml-[16px]  flex flex-row items-center  justify-between !bg-white lg:mt-[49px] lg:mb-[29px] lg:ml-[32px]">
@@ -310,24 +310,15 @@ const Sidebar = ({ onValueChange }) => {
                     process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
                       ? process.env.NEXT_PUBLIC_BASE_PATH
                       : ''
-                  }/images/logo/pythia.svg`}
+                  }/images/logo/dooor-logotipo.png`}
                   alt="image"
-                  className={`w-[100px] md:w-[40px] lg:w-[300px] ${
+                  className={`mt-5 w-[100px] md:w-[40px] lg:w-[300px] ${
                     sidebarOpen ? '' : 'hidden'
                   }`}
                 />
               </a>
             </div>
             <div className="absolute top-[60px] flex h-[25px] w-[10.5px] items-center gap-x-[20px] lg:top-[92px] lg:w-[21.5px]">
-              <img
-                src={`${
-                  process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-                    ? process.env.NEXT_PUBLIC_BASE_PATH
-                    : ''
-                }/images/logo/search.svg`}
-                className="hidden md:block"
-                alt="image"
-              />
               {sidebarOpen && (
                 <input
                   value={inputValue}

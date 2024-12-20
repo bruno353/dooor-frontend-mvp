@@ -16,11 +16,15 @@ module.exports = {
       current: 'currentColor',
       transparent: 'transparent',
       white: '#FFFFFF',
-      black: '#000000',
+      black: '#090E34',
       dark: '#1D2144',
       primary: '#4A6CF7',
       yellow: '#FBB040',
+      gray: '#C5C4C4',
+      purple: '#592a7f',
+      green: '#6FD572',
       'body-color': '#959CB1',
+      red: '#cc5563',
     },
 
     extend: {
