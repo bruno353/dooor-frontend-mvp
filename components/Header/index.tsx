@@ -12,13 +12,17 @@ import { AccountContext } from '../../contexts/AccountContext'
 import { usePathname, useSearchParams, useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { useConfig, useAccount } from 'wagmi'
+import { signMessage } from 'wagmi/actions'
 
 import { hashObject } from '@/utils/functions'
 import { ConnectKitButton } from 'connectkit'
-import { useAccount } from 'wagmi'
+import { callAxiosBackend } from '@/utils/general-api'
 
 const Header = () => {
   // Navbar toggle
+  const { config } = useConfig()
+
   const [navbarOpen, setNavbarOpen] = useState(false)
   const [userNavbarOpen, setUserNavbarOpen] = useState(false)
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false)
@@ -56,6 +60,34 @@ const Header = () => {
 
   const sidebarToggleHandler = () => {
     setSidebarOpen(!sidebarOpen)
+  }
+
+  async function checkAndRequestSignature(address: string) {
+    console.log('check and request signature testado')
+    try {
+      // First check if address is already signed
+      const res = await callAxiosBackend(
+        'get',
+        `/dooor/is_whitelisted?address=${address}`,
+        null,
+      )
+
+      if (!res) {
+        // Request signature from user
+        const signature = await signMessage(config, {
+          message: 'create-account-dooor',
+          account: address as `0x${string}`, // Precisamos fazer o cast para o tipo correto
+        })
+
+        // Verify signature
+        await callAxiosBackend('post', '/dooor/verify_signature', null, {
+          signature,
+        })
+      }
+    } catch (err) {
+      console.error('Error in signature flow:', err)
+      toast.error('Error verifying wallet signature')
+    }
   }
 
   const [isEditing, setIsEditing] = useState(false)
@@ -118,19 +150,15 @@ const Header = () => {
   const headerItens = [
     {
       label: 'About',
-      href: `https://open-mesh.gitbook.io/l3a-v3-documentation-2.0/openmesh/openmesh-overview`,
+      href: `https://dooor.ai`,
     },
     {
       label: 'Use cases',
-      href: `https://open-mesh.gitbook.io/l3a-v3-documentation-2.0/openmesh/use-cases`,
-    },
-    {
-      label: 'Innovation',
-      href: `https://open-mesh.gitbook.io/l3a-v3-documentation-2.0/openmesh/vision-and-roadmap`,
+      href: `https://dooor.ai`,
     },
     {
       label: 'Docs',
-      href: `https://openmesh.network/xnode/docs`,
+      href: `https://dooor.ai`,
     },
   ]
 
@@ -328,6 +356,39 @@ const Header = () => {
       }
     }
     getWeb3Login()
+  }, [address])
+
+  useEffect(() => {
+    async function handleAddressChange() {
+      if (address) {
+        console.log('entrei em handle address change')
+        await checkAndRequestSignature(address)
+
+        if (!user && !userHasAnyCookie) {
+          // Existing web3 login flow
+          try {
+            let nonceUser = await getUserNonce(address)
+            nonceUser = nonceUser || '0'
+            const hash = hashObject(`${address}-${nonceUser}`)
+            console.log('message to hash')
+            console.log(hash)
+            const finalHash = `0x${hash}`
+            const signature = await signMessage(config, {
+              message: finalHash,
+              account: address as `0x${string}`,
+            })
+            const res = await loginWeb3User(address, signature)
+            setCookie(null, 'userSessionToken', res.sessionToken)
+            nookies.set(null, 'userSessionToken', res.sessionToken)
+            setUser(res)
+          } catch (err) {
+            toast.error(err)
+            console.log('error logging user')
+          }
+        }
+      }
+    }
+    handleAddressChange()
   }, [address])
 
   // useEffect(() => {

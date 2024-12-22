@@ -45,16 +45,6 @@ const PythiaLandingPage = () => {
     }
   }
 
-  const [placeholder, setPlaceholder] = useState(
-    'Connect wallet to start chatting',
-  )
-
-  useEffect(() => {
-    setPlaceholder(
-      address ? 'Type your query' : 'Connect wallet to start chatting',
-    )
-  }, [address])
-
   const messagesEndRef = useRef(null)
 
   async function handleNonUserCreateChat() {

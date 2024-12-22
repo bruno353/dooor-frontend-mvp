@@ -3,7 +3,7 @@ import { ChevronDown } from 'lucide-react'
 
 const ModelSelector = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const [selectedModel, setSelectedModel] = useState('000 1.0.1')
+  const [selectedModel, setSelectedModel] = useState('FIIBO 1.0.1')
   const dropdownRef = useRef(null)
 
   useEffect(() => {
@@ -20,8 +20,8 @@ const ModelSelector = () => {
   }, [])
 
   const models = [
-    { id: 1, name: '000 1.0.1', description: 'Stable release', soon: false },
-    { id: 2, name: '000 1.0.2', description: 'Beta version', soon: false },
+    { id: 1, name: 'FIIBO 1.0.1', description: 'Stable release', soon: false },
+    { id: 2, name: 'OAT 1.0.2', description: 'Beta version', soon: false },
     {
       id: 3,
       name: 'Apolis 1.0.0',
