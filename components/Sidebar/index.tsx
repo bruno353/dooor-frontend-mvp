@@ -17,6 +17,7 @@ import {
   subDays,
   startOfDay,
   isBefore,
+  endOfDay,
 } from 'date-fns'
 import { AiChatProps } from '@/types/pythia'
 import { ChatStorage } from '@/utils/chat-storage'
@@ -36,15 +37,14 @@ const Sidebar = ({ onValueChange }) => {
   const [pythiaChatName, setPythiaChatName] = useState<string>('www')
   const [inputValue, setInputValue] = useState<string>('')
   const { push } = useRouter()
-  const [allPythiaChats, setAllPythiaChats] = useState<AiChatProps[]>()
 
   const menuRef = useRef(null)
   const chatNameRef = useRef(null)
 
   useEffect(() => {
-    console.log('getitng all chats history')
-    console.log(ChatStorage.getAllChats())
-    setPythiaChats(ChatStorage.getAllChats())
+    const chats = ChatStorage.getAllChats()
+    console.log('getting all chats history', chats)
+    setPythiaChats(chats)
   }, [])
 
   function sendToChat(id: string) {
@@ -172,38 +172,59 @@ const Sidebar = ({ onValueChange }) => {
   }
 
   useEffect(() => {
-    let filteredChats = allPythiaChats
+    const allChats = ChatStorage.getAllChats()
     if (inputValue.length > 0) {
-      filteredChats = allPythiaChats?.filter((chat) => {
-        if (!chat?.name) {
-          return `Chat ${chat.id}`
-            .toLowerCase()
-            .includes(inputValue.toLowerCase())
-        } else {
-          return chat?.name?.toLowerCase().includes(inputValue.toLowerCase())
-        }
+      const filteredChats = allChats.filter((chat) => {
+        const searchString = chat.name || `Chat ${chat.id}`
+        return searchString.toLowerCase().includes(inputValue.toLowerCase())
       })
+      setPythiaChats(filteredChats)
+    } else {
+      setPythiaChats(allChats)
     }
-    setPythiaChats(filteredChats)
-  }, [inputValue, allPythiaChats])
+  }, [inputValue])
 
-  const hasChatsForFilter = (filter) => {
-    return pythiaChats?.some((chat) => validateDateChat(filter, chat))
-  }
+  useEffect(() => {
+    setPythiaChats(ChatStorage.getAllChats())
+  }, [pythiaChat])
+
   const arrayDateFilters = ['Today', 'Previous 7 days', 'Previous']
   function validateDateChat(date: string, chat: AiChatProps) {
     const createdAt = new Date(chat.createdAt)
+    const now = new Date()
+
     if (date === 'Today') {
       return isToday(createdAt)
     } else if (date === 'Previous 7 days') {
-      return isWithinInterval(createdAt, {
-        start: subDays(startOfDay(new Date()), 7),
-        end: subDays(new Date(), 1),
+      // Cria data de 7 dias atrás no início do dia
+      const sevenDaysAgo = startOfDay(subDays(now, 7))
+      // E compara com o fim de ontem (para excluir hoje)
+      const yesterday = endOfDay(subDays(now, 1))
+      console.log(createdAt)
+      console.log('Checking interval:', {
+        date: createdAt,
+        start: sevenDaysAgo,
+        end: yesterday,
+        isWithin: isWithinInterval(createdAt, {
+          start: sevenDaysAgo,
+          end: yesterday,
+        }),
       })
+
+      return (
+        !isToday(createdAt) && // Não é hoje
+        isWithinInterval(createdAt, {
+          start: sevenDaysAgo,
+          end: yesterday,
+        })
+      )
     } else if (date === 'Previous') {
-      return isBefore(createdAt, subDays(startOfDay(new Date()), 7))
+      // Mais de 7 dias atrás
+      return isBefore(createdAt, subDays(startOfDay(now), 7))
     }
+    return false
   }
+
   return (
     <>
       <div
@@ -266,143 +287,123 @@ const Sidebar = ({ onValueChange }) => {
           </div>
           <div className="!z-30 mt-[100px] grid gap-y-[10px] px-[22px] text-[13px] text-[#000]">
             {arrayDateFilters.map((filter) => {
-              const chatsInFilter = pythiaChats.filter((chat) =>
+              const chatsInFilter = pythiaChats?.filter((chat) =>
                 validateDateChat(filter, chat),
               )
 
-              if (chatsInFilter.length === 0) return null
+              if (!chatsInFilter?.length) return null
 
               return (
                 <div key={filter} className="">
                   <div className="text-[#000000a8]">{filter}</div>
                   <div className="mt-[5px] mb-[5px] grid gap-y-[5px]">
-                    {pythiaChats &&
-                      pythiaChats.map((chat, index) => {
-                        if (validateDateChat(filter, chat)) {
-                          return (
-                            <div
-                              onMouseEnter={() => {
-                                setPythiaChatHovered(chat)
-                              }}
-                              onMouseLeave={() => {
-                                setPythiaChatHovered(null)
-                              }}
-                              className={`${
-                                pythiaChat && pythiaChat.id === chat.id
-                                  ? 'bg-[#e2e2e25d]'
-                                  : ''
-                              }  relative   rounded-md hover:bg-[#e2e2e25d] ${
-                                validateDateChat(filter, chat) ? '' : 'hidden'
-                              }`}
-                              key={index}
-                            >
-                              {pythiaChatRename?.id === chat.id ? (
-                                <input
-                                  ref={chatNameRef}
-                                  value={pythiaChatName}
-                                  onChange={(e) => {
-                                    console.log(e.target.value)
-                                    setPythiaChatName(e.target.value)
-                                    console.log('pythia chat name')
-                                    console.log(pythiaChatName)
-                                  }}
-                                  className={`cursor-pointer overflow-hidden bg-white ${
-                                    sidebarOpen ? 'w-[240px]' : 'max-w-[110px]'
-                                  } truncate text-ellipsis whitespace-nowrap p-[10px]`}
-                                  autoFocus
-                                />
-                              ) : (
-                                <div
-                                  className={`${
-                                    pythiaChat && pythiaChat.id === chat.id
-                                      ? 'bg-[#e2e2e25d]'
-                                      : ''
-                                  } cursor-pointer overflow-hidden ${
-                                    sidebarOpen ? 'w-[240px]' : 'max-w-[110px]'
-                                  } truncate text-ellipsis whitespace-nowrap p-[10px]`}
-                                  onClick={() => {
-                                    sendToChat(chat.id)
-                                  }}
-                                >
-                                  {chat.name ? chat.name : `Chat ${chat.id}`}
-                                </div>
-                              )}
+                    {chatsInFilter.map((chat) => (
+                      <div
+                        key={chat.id}
+                        onMouseEnter={() => setPythiaChatHovered(chat)}
+                        onMouseLeave={() => setPythiaChatHovered(null)}
+                        className={`${
+                          pythiaChat?.id === chat.id ? 'bg-[#e2e2e25d]' : ''
+                        } relative rounded-md hover:bg-[#e2e2e25d]`}
+                      >
+                        <div
+                          className={`flex cursor-pointer items-center gap-2 p-2 ${
+                            sidebarOpen ? 'w-[240px]' : 'max-w-[80px]'
+                          }`}
+                          onClick={() => sendToChat(chat.id)}
+                        >
+                          <img
+                            src={
+                              chat.model?.image ||
+                              '/images/pythia/default-model.svg'
+                            }
+                            alt={chat.model?.tag || 'model'}
+                            className="h-4 w-4"
+                          />
+                          <div className="flex-1 truncate">
+                            {pythiaChatRename?.id === chat.id ? (
+                              <input
+                                ref={chatNameRef}
+                                value={pythiaChatName}
+                                onChange={(e) =>
+                                  setPythiaChatName(e.target.value)
+                                }
+                                className="w-full bg-transparent outline-none"
+                                autoFocus
+                              />
+                            ) : (
+                              <span>{chat.name || `Chat ${chat.id}`}</span>
+                            )}
+                          </div>
+                          {/* {chat.model?.tag && (
+                            <span className="text-gray-500 text-xs">
+                              {chat.model.tag}
+                            </span>
+                          )} */}
+                        </div>
 
-                              {pythiaChatHovered?.id === chat.id && (
-                                <div
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    setIsChatMenuOpen(chat)
-                                  }}
-                                  className="absolute top-0 right-0 flex h-full cursor-pointer bg-[#e2e2e25d] px-[10px] text-[10px] backdrop-blur-sm"
-                                >
-                                  <img
-                                    src={`${
-                                      process.env.NEXT_PUBLIC_ENVIRONMENT ===
-                                      'PROD'
-                                        ? process.env.NEXT_PUBLIC_BASE_PATH
-                                        : ''
-                                    }/images/pythia/dots.svg`}
-                                    alt="image"
-                                    className="my-auto w-[16px] cursor-pointer"
-                                  />
-                                </div>
-                              )}
-                              {isChatMenuOpen?.id === chat.id && (
-                                <div
-                                  ref={menuRef}
-                                  className="absolute top-0 right-0 !z-[999999] translate-x-[105%]  rounded-md border-[0.5px] bg-[#F9F9F9] py-[5px]"
-                                >
-                                  <div
-                                    onClick={() => {
-                                      setPythiaChatRename(chat)
-                                      setPythiaChatName(chat.name)
-                                      setIsChatMenuOpen(null)
-                                    }}
-                                    className="flex cursor-pointer gap-x-[7px] rounded-sm px-[10px] py-[5px] hover:bg-[#e2e2e25d]"
-                                  >
-                                    <img
-                                      src={`${
-                                        process.env.NEXT_PUBLIC_ENVIRONMENT ===
-                                        'PROD'
-                                          ? process.env.NEXT_PUBLIC_BASE_PATH
-                                          : ''
-                                      }/images/pythia/pencil.svg`}
-                                      alt="image"
-                                      className="my-auto w-[18px]"
-                                    />
-                                    <div className="text-[#000000b7]">
-                                      Rename
-                                    </div>
-                                  </div>
-                                  <div
-                                    onClick={() => {
-                                      handleDeletePythiaChat(chat)
-                                    }}
-                                    className="flex  cursor-pointer gap-x-[14px] rounded-sm px-[10px] py-[5px] hover:bg-[#e2e2e25d]"
-                                  >
-                                    <img
-                                      src={`${
-                                        process.env.NEXT_PUBLIC_ENVIRONMENT ===
-                                        'PROD'
-                                          ? process.env.NEXT_PUBLIC_BASE_PATH
-                                          : ''
-                                      }/images/pythia/garbage.svg`}
-                                      alt="image"
-                                      className="my-auto w-[12px]"
-                                    />
-                                    <div className="text-[#000000b7]">
-                                      Delete
-                                    </div>
-                                  </div>
-                                </div>
-                              )}
+                        {pythiaChatHovered?.id === chat.id && (
+                          <div
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              setIsChatMenuOpen(chat)
+                            }}
+                            className="absolute top-0 right-0 flex h-full cursor-pointer bg-[#e2e2e25d] px-[10px] text-[10px] backdrop-blur-sm"
+                          >
+                            <img
+                              src={`${
+                                process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
+                                  ? process.env.NEXT_PUBLIC_BASE_PATH
+                                  : ''
+                              }/images/pythia/dots.svg`}
+                              alt="image"
+                              className="my-auto w-[16px] cursor-pointer"
+                            />
+                          </div>
+                        )}
+                        {isChatMenuOpen?.id === chat.id && (
+                          <div
+                            ref={menuRef}
+                            className="absolute top-0 right-0 !z-[999999] translate-x-[105%]  rounded-md border-[0.5px] bg-[#F9F9F9] py-[5px]"
+                          >
+                            <div
+                              onClick={() => {
+                                setPythiaChatRename(chat)
+                                setPythiaChatName(chat.name)
+                                setIsChatMenuOpen(null)
+                              }}
+                              className="flex cursor-pointer gap-x-[7px] rounded-sm px-[10px] py-[5px] hover:bg-[#e2e2e25d]"
+                            >
+                              <img
+                                src={`${
+                                  process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
+                                    ? process.env.NEXT_PUBLIC_BASE_PATH
+                                    : ''
+                                }/images/pythia/pencil.svg`}
+                                alt="image"
+                                className="my-auto w-[18px]"
+                              />
+                              <div className="text-[#000000b7]">Rename</div>
                             </div>
-                          )
-                        } else {
-                          return null
-                        }
-                      })}{' '}
+                            <div
+                              onClick={() => handleDeletePythiaChat(chat)}
+                              className="flex cursor-pointer gap-x-[14px] rounded-sm px-[10px] py-[5px] hover:bg-[#e2e2e25d]"
+                            >
+                              <img
+                                src={`${
+                                  process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
+                                    ? process.env.NEXT_PUBLIC_BASE_PATH
+                                    : ''
+                                }/images/pythia/garbage.svg`}
+                                alt="image"
+                                className="my-auto w-[12px]"
+                              />
+                              <div className="text-[#000000b7]">Delete</div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </div>
               )
