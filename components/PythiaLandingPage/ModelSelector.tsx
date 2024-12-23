@@ -4,8 +4,8 @@ import { ChevronDown } from 'lucide-react'
 export const models = [
   {
     id: 1,
-    name: 'FIIBO 1.0.1',
-    tag: 'FIIBO',
+    name: 'ACL 1.0.1',
+    tag: 'ACL',
     image: 'images/logo/dooor-logo.svg',
     description: 'Stable release',
     soon: false,
@@ -34,7 +34,7 @@ export const models = [
 
 const ModelSelector = ({ onSelect, disabled = false }) => {
   const [isOpen, setIsOpen] = useState(false)
-  const [selectedModel, setSelectedModel] = useState('FIIBO 1.0.1')
+  const [selectedModel, setSelectedModel] = useState('ACL 1.0.1')
   const dropdownRef = useRef(null)
 
   useEffect(() => {
@@ -53,15 +53,22 @@ const ModelSelector = ({ onSelect, disabled = false }) => {
   return (
     <div className="relative" ref={dropdownRef}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          if (!disabled) {
+            setIsOpen(!isOpen)
+          }
+        }}
+        disabled={disabled}
         className="flex items-center gap-x-2 rounded-md px-2 py-1 text-sm transition-colors hover:bg-gray/10"
       >
         <span className="text-black">{selectedModel}</span>
-        <ChevronDown
-          className={`text-gray-400 h-4 w-4 transition-transform ${
-            isOpen ? 'rotate-180' : ''
-          }`}
-        />
+        {!disabled && (
+          <ChevronDown
+            className={`text-gray-400 h-4 w-4 transition-transform ${
+              isOpen ? 'rotate-180' : ''
+            }`}
+          />
+        )}
       </button>
 
       {isOpen && (

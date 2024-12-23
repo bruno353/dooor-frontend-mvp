@@ -150,15 +150,15 @@ const Header = () => {
   const headerItens = [
     {
       label: 'About',
-      href: `https://dooor.ai`,
+      href: `https://accelar.io`,
     },
     {
       label: 'Use cases',
-      href: `https://dooor.ai`,
+      href: `https://accelar.io`,
     },
     {
       label: 'Docs',
-      href: `https://dooor.ai`,
+      href: `https://docs.accelar.io`,
     },
   ]
 

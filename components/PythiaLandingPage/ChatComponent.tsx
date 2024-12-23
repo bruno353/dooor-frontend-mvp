@@ -12,6 +12,7 @@ import 'react-quill/dist/quill.snow.css' // import styles
 import './react-quill.css'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import { useRouter } from 'next/navigation'
 
 interface ChatComponentProps {
   mode?: 'landing' | 'page'
@@ -27,8 +28,9 @@ export const ChatComponent = ({
   mode = 'landing',
   chatId,
 }: ChatComponentProps) => {
-  const { chats, setChats, currentChat, setCurrentChat } =
-    useContext(AccountContext)
+  const router = useRouter()
+
+  const { setChats, currentChat, setCurrentChat } = useContext(AccountContext)
   const [selectedModel, setSelectedModel] = useState(models[0])
 
   const [newMessageHtml, setNewMessageHtml] = useState('')
@@ -95,7 +97,7 @@ export const ChatComponent = ({
           signature: address || '0x',
         },
       )
-      await new Promise((resolve) => setTimeout(resolve, 3500))
+      await new Promise((resolve) => setTimeout(resolve, 7500))
 
       newInput.response = response.data.content
       newInput.updatedAt = new Date().toISOString()
@@ -104,6 +106,10 @@ export const ChatComponent = ({
       ChatStorage.saveChat(chatToUpdate)
       setCurrentChat({ ...chatToUpdate })
       setChats(ChatStorage.getAllChats())
+      if (mode === 'landing' && !currentChat) {
+        router.push(`/chat/${chatToUpdate.id}`)
+        window.location.reload()
+      }
     } catch (err) {
       console.error(err)
       toast.error('Error in chat')
@@ -248,12 +254,12 @@ export const ChatComponent = ({
         ) : (
           <div className="mx-auto  mt-auto mb-32">
             <img
-              src={`images/logo/dooor-logo.svg`}
+              src={`images/logo/accelar-logo.svg`}
               alt="image"
               className={`mx-auto w-[40px]`}
             />
             <div className="mt-5 text-xl font-semibold text-[#000]">
-              How can Dooor help you?
+              How can Accelar help you?
             </div>
           </div>
         )}

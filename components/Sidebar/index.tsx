@@ -264,7 +264,7 @@ const Sidebar = ({ onValueChange }) => {
                     process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
                       ? process.env.NEXT_PUBLIC_BASE_PATH
                       : ''
-                  }/images/logo/dooor-logotipo.png`}
+                  }/images/logo/accelar-written-logo.svg`}
                   alt="image"
                   className={`mt-5 w-[100px] md:w-[40px] lg:w-[300px] ${
                     sidebarOpen ? '' : 'hidden'
