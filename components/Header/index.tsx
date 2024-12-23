@@ -21,7 +21,7 @@ import { callAxiosBackend } from '@/utils/general-api'
 
 const Header = () => {
   // Navbar toggle
-  const { config } = useConfig()
+  const config = useConfig()
 
   const [navbarOpen, setNavbarOpen] = useState(false)
   const [userNavbarOpen, setUserNavbarOpen] = useState(false)

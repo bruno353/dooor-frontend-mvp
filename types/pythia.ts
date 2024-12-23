@@ -1,4 +1,4 @@
-export interface PythiaInputProps {
+export interface AiInputProps {
   id: string
   userMessage: string
   response: string
@@ -9,11 +9,18 @@ export interface PythiaInputProps {
   updatedAt: string
 }
 
-export interface PythiaChatProps {
+export interface AiChatProps {
   id: string
   name: string
   openmeshExpertUserId: string
-  PythiaInputs: PythiaInputProps[]
+  model: {
+    name: string
+    tag?: string
+    image?: string
+    description?: string
+    soon?: boolean
+  }
+  PythiaInputs: AiInputProps[]
   createdAt: string
   updatedAt: string
 }

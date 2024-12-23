@@ -1,6 +1,8 @@
+'use client'
 /* eslint-disable no-unused-vars */
-import { PythiaChatProps } from '@/types/pythia'
-import React, { createContext, useState } from 'react'
+import { AiChatProps } from '@/types/pythia'
+import { ChatStorage } from '@/utils/chat-storage'
+import React, { createContext, useEffect, useState } from 'react'
 
 export interface UserProps {
   id: string
@@ -93,11 +95,16 @@ interface CreateUserContextProps {
   removeNodes: any
   setRemoveNodes: (value: any) => void
 
-  pythiaChat: PythiaChatProps | undefined
-  setPythiaChat: (pythiaChat: PythiaChatProps | undefined) => void
+  pythiaChat: AiChatProps | undefined
+  setPythiaChat: (pythiaChat: AiChatProps | undefined) => void
 
   user: UserProps | undefined
   setUser: (user: UserProps | undefined) => void
+
+  chats: AiChatProps[]
+  setChats: (chats: AiChatProps[]) => void
+  currentChat: AiChatProps | null
+  setCurrentChat: (chat: AiChatProps | null) => void
 }
 
 export const AccountContext = createContext({} as CreateUserContextProps)
@@ -105,8 +112,15 @@ export const AccountContext = createContext({} as CreateUserContextProps)
 export default function AccountContextProvider({
   children,
 }: CreateContextProps) {
+  const [chats, setChats] = useState<AiChatProps[]>([])
+  const [currentChat, setCurrentChat] = useState<AiChatProps | null>(null)
+
+  useEffect(() => {
+    setChats(ChatStorage.getAllChats())
+  }, [])
+
   const [user, setUser] = useState<UserProps>()
-  const [pythiaChat, setPythiaChat] = useState<PythiaChatProps>()
+  const [pythiaChat, setPythiaChat] = useState<AiChatProps>()
   const [changeNodes, setChangeNodes] = useState()
   const [removeNodes, setRemoveNodes] = useState()
   const [selectionSideNavBar, setSelectionSideNavBar] =
@@ -136,6 +150,10 @@ export default function AccountContextProvider({
   return (
     <AccountContext.Provider
       value={{
+        chats,
+        setChats,
+        currentChat,
+        setCurrentChat,
         selectionSideNavBar,
         setSelectionSideNavBar,
         projectName,

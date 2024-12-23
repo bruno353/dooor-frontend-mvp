@@ -17,7 +17,6 @@ import { AccountContext } from '@/contexts/AccountContext'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { getSanitizeText } from '@/utils/functions-chat'
-import { PythiaChatProps, PythiaInputProps } from '@/types/pythia'
 
 const QuillNoSSRWrapper = dynamic(import('react-quill'), {
   ssr: false,

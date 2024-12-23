@@ -1,7 +1,38 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { ChevronDown } from 'lucide-react'
 
-const ModelSelector = () => {
+export const models = [
+  {
+    id: 1,
+    name: 'FIIBO 1.0.1',
+    tag: 'FIIBO',
+    image: 'images/logo/dooor-logo.svg',
+    description: 'Stable release',
+    soon: false,
+  },
+  {
+    id: 2,
+    name: 'OAT 1.0.2',
+    tag: 'OAT',
+    image: 'images/logo/dooor-logo.svg',
+    description: 'Beta version',
+    soon: false,
+  },
+  {
+    id: 3,
+    name: 'Apolis 1.0.0',
+    description: 'Trading agent',
+    soon: true,
+  },
+  {
+    id: 4,
+    name: 'PumpMeme 0.1',
+    description: 'Experimental agent',
+    soon: true,
+  },
+]
+
+const ModelSelector = ({ onSelect, disabled = false }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [selectedModel, setSelectedModel] = useState('FIIBO 1.0.1')
   const dropdownRef = useRef(null)
@@ -18,23 +49,6 @@ const ModelSelector = () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
-
-  const models = [
-    { id: 1, name: 'FIIBO 1.0.1', description: 'Stable release', soon: false },
-    { id: 2, name: 'OAT 1.0.2', description: 'Beta version', soon: false },
-    {
-      id: 3,
-      name: 'Apolis 1.0.0',
-      description: 'Trading agent',
-      soon: true,
-    },
-    {
-      id: 4,
-      name: 'PumpMeme 0.1',
-      description: 'Experimental agent',
-      soon: true,
-    },
-  ]
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -58,6 +72,7 @@ const ModelSelector = () => {
               onClick={() => {
                 if (!model.soon) {
                   setSelectedModel(model.name)
+                  onSelect?.(model)
                   setIsOpen(false)
                 }
               }}
