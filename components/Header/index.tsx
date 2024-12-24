@@ -556,7 +556,7 @@ const Header = () => {
                   <img
                     src={`/images/header/question.svg`}
                     alt="image"
-                    className="mb-[5px] w-[6.5px]  md:w-[7.8px]  lg:w-[9.1px] xl:w-[10.4px] 2xl:w-[13px]"
+                    className="mb-[5px] w- [6.5px]  md:w-[7.8px]  lg:w-[9.1px] xl:w-[10.4px] 2xl:w-[13px]"
                   />
                 </div>
               </div> */}
