@@ -30,6 +30,13 @@ export interface UserProps {
   updatedAt: string
 }
 
+export interface CreditsInfo {
+  remaining_credits: number
+  total_credits: number
+  usage_percentage: number
+  used_credits: number
+}
+
 interface CreateContextProps {
   children: React.ReactNode
 }
@@ -98,6 +105,9 @@ interface CreateUserContextProps {
   pythiaChat: AiChatProps | undefined
   setPythiaChat: (pythiaChat: AiChatProps | undefined) => void
 
+  credits: CreditsInfo | undefined
+  setCredits: (credits: CreditsInfo | undefined) => void
+
   user: UserProps | undefined
   setUser: (user: UserProps | undefined) => void
 
@@ -114,6 +124,7 @@ export default function AccountContextProvider({
 }: CreateContextProps) {
   const [chats, setChats] = useState<AiChatProps[]>([])
   const [currentChat, setCurrentChat] = useState<AiChatProps | null>(null)
+  const [credits, setCredits] = useState<CreditsInfo | null>(null)
 
   useEffect(() => {
     setChats(ChatStorage.getAllChats())
@@ -150,6 +161,8 @@ export default function AccountContextProvider({
   return (
     <AccountContext.Provider
       value={{
+        credits,
+        setCredits,
         chats,
         setChats,
         currentChat,

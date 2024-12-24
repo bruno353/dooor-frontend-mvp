@@ -34,28 +34,14 @@ const Header = () => {
   const {
     user,
     setUser,
-    next,
-    setNext,
-    nextFromScratch,
-    finalNodes,
-    setReviewYourBuild,
-    reviewYourBuild,
     setIsWorkspace,
-    tagXnode,
-    projectName,
-    setProjectName,
-    setTagXnode,
-    isEditingXnode,
     setIsEditingXnode,
-    setNextFromScratch,
-    projectDescription,
-    setProjectDescription,
     setXnodeType,
-    xnodeType,
     setFinalNodes,
-    setUpdateDataNode,
     sidebarOpen,
     setSidebarOpen,
+    credits,
+    setCredits,
   } = useContext(AccountContext)
 
   const sidebarToggleHandler = () => {
@@ -129,24 +115,6 @@ const Header = () => {
     window.location.reload()
   }
 
-  const features = [
-    {
-      label: 'Browse',
-      isCurrentlyPage: false,
-      href: `/`,
-    },
-    {
-      label: 'Become a data provider',
-      isCurrentlyPage: false,
-      href: `/become`,
-    },
-    {
-      label: 'FAQs',
-      isCurrentlyPage: false,
-      href: `/faqs`,
-    },
-  ]
-
   const headerItens = [
     {
       label: 'About',
@@ -161,70 +129,6 @@ const Header = () => {
       href: `https://docs.accelar.io`,
     },
   ]
-
-  async function saveEditingXnode() {
-    setIsLoadingUpdate(true)
-
-    const savedNodes = localStorage.getItem('nodes')
-    const savedEdges = localStorage.getItem('edges')
-    const nodeId = localStorage.getItem('editingNode')
-
-    const finalData = {
-      xnodeId: nodeId,
-      name: projectName,
-      description: projectDescription,
-      useCase: tagXnode,
-      status: 'Running',
-      consoleNodes: savedNodes,
-      consoleEdges: savedEdges,
-    }
-
-    if (user.sessionToken) {
-      const config = {
-        method: 'put' as 'put',
-        url: `${process.env.NEXT_PUBLIC_API_BACKEND_BASE_URL}/xnodes/functions/updateXnode`,
-        headers: {
-          'x-parse-application-id': `${process.env.NEXT_PUBLIC_API_BACKEND_KEY}`,
-          'X-Parse-Session-Token': user.sessionToken,
-          'Content-Type': 'application/json',
-        },
-        data: finalData,
-      }
-
-      try {
-        await axios(config).then(function (response) {
-          if (response.data) {
-            console.log('set next false yes')
-            setNext(false)
-            setNextFromScratch(false)
-            toast.success(`Success`)
-            localStorage.clear()
-            push(
-              `${
-                process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-                  ? `/xnode/dashboard`
-                  : `/dashboard`
-              }`,
-            )
-          }
-        })
-      } catch (err) {
-        toast.error(
-          `Error during Xnode deployment: ${err.response.data.message}`,
-        )
-      }
-    } else {
-      toast.error(`User nor found`)
-      push(
-        `${
-          process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-            ? `/xnode/start-here`
-            : `/start-here`
-        }`,
-      )
-    }
-    setIsLoadingUpdate(false)
-  }
 
   async function getUserData() {
     const { userSessionToken } = parseCookies()
@@ -305,6 +209,31 @@ const Header = () => {
     return dado
   }
 
+  async function fetchUserCredits(addressCheck: string) {
+    try {
+      const response = await axios(
+        `http://provider.europlots.com:32480/admin/user_credits/${addressCheck}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer sua_chave_api_aqui',
+          },
+        },
+      )
+
+      if (!response) {
+        throw new Error('Failed to fetch credits')
+      }
+
+      const data = await response.data
+      return data
+    } catch (error) {
+      console.error('Error fetching credits:', error)
+      return null
+    }
+  }
+
   async function loginWeb3User(userAddress: string, signature: string) {
     const config = {
       method: 'post' as 'post',
@@ -364,27 +293,11 @@ const Header = () => {
         console.log('entrei em handle address change')
         await checkAndRequestSignature(address)
 
-        if (!user && !userHasAnyCookie) {
-          // Existing web3 login flow
-          try {
-            let nonceUser = await getUserNonce(address)
-            nonceUser = nonceUser || '0'
-            const hash = hashObject(`${address}-${nonceUser}`)
-            console.log('message to hash')
-            console.log(hash)
-            const finalHash = `0x${hash}`
-            const signature = await signMessage(config, {
-              message: finalHash,
-              account: address as `0x${string}`,
-            })
-            const res = await loginWeb3User(address, signature)
-            setCookie(null, 'userSessionToken', res.sessionToken)
-            nookies.set(null, 'userSessionToken', res.sessionToken)
-            setUser(res)
-          } catch (err) {
-            toast.error(err)
-            console.log('error logging user')
-          }
+        const credits = await fetchUserCredits(address)
+        console.log('recebi de credits')
+        console.log(credits)
+        if (credits?.remaining_credits) {
+          setCredits(credits)
         }
       }
     }
@@ -415,92 +328,6 @@ const Header = () => {
       <header className="top-0 left-0 z-40 mx-0 w-full items-center bg-[#fff] px-[17px] pt-[7px]  text-[#000000] xl:px-[43px] xl:pt-[20px] xl:pb-[16px]">
         <div className="flex">
           <div className="w-full justify-between py-[20px] px-[20px] md:px-[33px] lg:hidden">
-            <div className="">
-              {pathname.includes('/workspace') && !reviewYourBuild && (
-                <div className="flex items-center">
-                  <img
-                    src={`${
-                      process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-                        ? process.env.NEXT_PUBLIC_BASE_PATH
-                        : ''
-                    }/images/header/user.svg`}
-                    alt="image"
-                    className="w-[16px] md:w-[19.2px] lg:w-[22.4px] xl:w-[25.5px] 2xl:w-[23px]"
-                  />
-                  {isEditing ? (
-                    <div className="mt-[20px]">
-                      <div className="flex gap-x-[10px]">
-                        <input
-                          value={projectName}
-                          onChange={(e) => setProjectName(e.target.value)}
-                          className="ml-[5px] bg-[#fff]"
-                          autoFocus
-                        />
-                        <select
-                          className="nodrag min-w-[104px] rounded-[6px] bg-[#fff] font-normal md:min-w-[124px] lg:min-w-[145px] xl:min-w-[167px] 2xl:min-w-[208px]"
-                          onChange={(option) =>
-                            setTagXnode(option.target.value)
-                          }
-                          value={tagXnode}
-                          disabled={xnodeType === 'validator'}
-                        >
-                          {tagsOptions.map((option) => (
-                            <option key={option} value={option}>
-                              {option}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                      <div className="ml-[5px] mt-[10px] flex">
-                        <div> Description: </div>{' '}
-                        <input
-                          value={projectDescription}
-                          onChange={(e) =>
-                            setProjectDescription(e.target.value)
-                          }
-                          className=" ml-[10px] bg-[#fff] text-[#999]"
-                          autoFocus
-                        />{' '}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="ml-[5px] text-[8px] font-bold text-[#313131] md:ml-[6px] md:text-[9.6px] lg:ml-[7px] lg:text-[11.2px] xl:ml-[8px] xl:text-[13px] 2xl:ml-[10px] 2xl:text-[16px]">
-                      {projectName}
-                    </div>
-                  )}
-                  {isEditing ? (
-                    <div
-                      onClick={() => setIsEditing(false)}
-                      className="ml-[20px] cursor-pointer text-[7.5px] font-medium text-[#0354EC]  underline underline-offset-[3px] hover:text-[#023ba5] md:ml-[24px] md:text-[8.5px] lg:ml-[28px] lg:text-[10px] xl:ml-[32px] xl:text-[11.2px] 2xl:ml-[40px] 2xl:text-[14px]"
-                    >
-                      Save
-                    </div>
-                  ) : (
-                    <div
-                      onClick={() => setIsEditing(true)}
-                      className="ml-[20px] cursor-pointer text-[7.5px] font-medium text-[#0354EC]  underline underline-offset-[3px] hover:text-[#023ba5] md:ml-[24px] md:text-[8.5px] lg:ml-[28px] lg:text-[10px] xl:ml-[32px] xl:text-[11.2px] 2xl:ml-[40px] 2xl:text-[14px]"
-                    >
-                      Edit
-                    </div>
-                  )}
-                  {isViewing ? (
-                    <div
-                      onClick={() => setIsViewing(false)}
-                      className="ml-[7.5px] cursor-pointer text-[7.5px] font-medium  text-[#0354EC] underline underline-offset-[3px] hover:text-[#023ba5] md:ml-[9px] md:text-[8.5px] lg:ml-[10.5px] lg:text-[10px] xl:ml-[12px] xl:text-[11.2px] 2xl:ml-[15px] 2xl:text-[14px]"
-                    >
-                      Hide
-                    </div>
-                  ) : (
-                    <div
-                      onClick={() => setIsViewing(true)}
-                      className="ml-[7.5px] cursor-pointer text-[7.5px] font-medium text-[#0354EC] underline underline-offset-[3px] hover:text-[#023ba5] md:ml-[9px] md:text-[8.5px] lg:ml-[10.5px] lg:text-[10px] xl:ml-[12px] xl:text-[11.2px] 2xl:ml-[15px] 2xl:text-[14px]"
-                    >
-                      View
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
             <button
               onClick={sidebarToggleHandler}
               id="navbarToggler"
@@ -637,86 +464,6 @@ const Header = () => {
             </nav>
           </div>
           <div className="relative mx-auto mb-[20px] hidden h-full w-full max-w-[1800px] items-center  justify-between lg:flex">
-            {pathname.includes('/workspace') && !reviewYourBuild && (
-              <div className="flex items-center">
-                <img
-                  src={`${
-                    process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-                      ? process.env.NEXT_PUBLIC_BASE_PATH
-                      : ''
-                  }/images/header/user.svg`}
-                  alt="image"
-                  className="w-[16px] md:w-[19.2px] lg:w-[22.4px] xl:w-[25.5px] 2xl:w-[23px]"
-                />
-                {isEditing ? (
-                  <div className="mt-[20px]">
-                    <div className="flex gap-x-[10px]">
-                      <input
-                        value={projectName}
-                        onChange={(e) => setProjectName(e.target.value)}
-                        className="ml-[5px] bg-[#fff]"
-                        autoFocus
-                      />
-                      <select
-                        className="nodrag min-w-[104px] rounded-[6px] bg-[#fff] font-normal md:min-w-[124px] lg:min-w-[145px] xl:min-w-[167px] 2xl:min-w-[208px]"
-                        onChange={(option) => setTagXnode(option.target.value)}
-                        value={tagXnode}
-                        disabled={xnodeType === 'validator'}
-                      >
-                        {tagsOptions.map((option) => (
-                          <option key={option} value={option}>
-                            {option}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                    <div className="ml-[5px] mt-[10px] flex">
-                      <div> Description: </div>{' '}
-                      <input
-                        value={projectDescription}
-                        onChange={(e) => setProjectDescription(e.target.value)}
-                        className=" ml-[10px] bg-[#fff] text-[#999]"
-                        autoFocus
-                      />{' '}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="ml-[5px] text-[8px] font-bold text-[#313131] md:ml-[6px] md:text-[9.6px] lg:ml-[7px] lg:text-[11.2px] xl:ml-[8px] xl:text-[13px] 2xl:ml-[10px] 2xl:text-[16px]">
-                    {projectName}
-                  </div>
-                )}
-                {isEditing ? (
-                  <div
-                    onClick={() => setIsEditing(false)}
-                    className="ml-[20px] cursor-pointer text-[7.5px] font-medium text-[#0354EC]  underline underline-offset-[3px] hover:text-[#023ba5] md:ml-[24px] md:text-[8.5px] lg:ml-[28px] lg:text-[10px] xl:ml-[32px] xl:text-[11.2px] 2xl:ml-[40px] 2xl:text-[14px]"
-                  >
-                    Save
-                  </div>
-                ) : (
-                  <div
-                    onClick={() => setIsEditing(true)}
-                    className="ml-[20px] cursor-pointer text-[7.5px] font-medium text-[#0354EC]  underline underline-offset-[3px] hover:text-[#023ba5] md:ml-[24px] md:text-[8.5px] lg:ml-[28px] lg:text-[10px] xl:ml-[32px] xl:text-[11.2px] 2xl:ml-[40px] 2xl:text-[14px]"
-                  >
-                    Edit
-                  </div>
-                )}
-                {isViewing ? (
-                  <div
-                    onClick={() => setIsViewing(false)}
-                    className="ml-[7.5px] cursor-pointer text-[7.5px] font-medium  text-[#0354EC] underline underline-offset-[3px] hover:text-[#023ba5] md:ml-[9px] md:text-[8.5px] lg:ml-[10.5px] lg:text-[10px] xl:ml-[12px] xl:text-[11.2px] 2xl:ml-[15px] 2xl:text-[14px]"
-                  >
-                    Hide
-                  </div>
-                ) : (
-                  <div
-                    onClick={() => setIsViewing(true)}
-                    className="ml-[7.5px] cursor-pointer text-[7.5px] font-medium text-[#0354EC] underline underline-offset-[3px] hover:text-[#023ba5] md:ml-[9px] md:text-[8.5px] lg:ml-[10.5px] lg:text-[10px] xl:ml-[12px] xl:text-[11.2px] 2xl:ml-[15px] 2xl:text-[14px]"
-                  >
-                    View
-                  </div>
-                )}
-              </div>
-            )}
             <div className="relative ml-auto flex gap-x-[25px] text-[7px] md:gap-x-[30px] md:text-[8.4px] lg:gap-x-[35px]  lg:text-[10px]  xl:gap-x-[40px] xl:text-[11.2px] 2xl:gap-x-[50px] 2xl:text-[14px]">
               {/* <div className="">
                 <div className="text-[7px] font-light md:text-[8.5px] lg:text-[10px] xl:text-[11.2px] 2xl:text-[14px]">
@@ -736,9 +483,13 @@ const Header = () => {
                   />
                 </div>
               </div> */}
+              <div className="text-black">{credits?.total_credits}</div>
               <div className="flex items-center gap-x-[15px] font-medium text-[#000] md:gap-x-[18px] lg:gap-x-[21px] xl:gap-x-[24px] 2xl:gap-x-[30px]">
                 {headerItens.map((option, index) => (
                   <a
+                    onClick={() => {
+                      fetchUserCredits(address)
+                    }}
                     key={index}
                     href={`${option.href}`}
                     target="_blank"
@@ -748,69 +499,23 @@ const Header = () => {
                   </a>
                 ))}
               </div>
-              {user?.sessionToken ? (
-                <div className="my-auto">
-                  <img
-                    src={
-                      !user.profilePictureHash
-                        ? `${
-                            process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-                              ? process.env.NEXT_PUBLIC_BASE_PATH
-                              : ''
-                          }/images/lateralNavBar/profile2.svg`
-                        : `https://cloudflare-ipfs.com/ipfs/${user.profilePictureHash}`
-                    }
-                    alt="image"
-                    onClick={() => {
-                      setUserNavbarOpen(!userNavbarOpen)
-                    }}
-                    className={`my-auto mr-[15px] w-[15px] cursor-pointer xl:w-[20px] 2xl:mr-[15px] 2xl:w-[25px]`}
-                  />
-                  <nav
-                    className={`navbar absolute right-[10px] z-50 flex w-[150px] rounded-[8px] border-[.5px] bg-[#e6e4e4] pt-[5px] pr-1 pl-[15px] pb-[20px] text-[13px] text-[#fff] duration-300  ${
-                      userNavbarOpen
-                        ? 'visibility top-10 -right-[50px] opacity-100'
-                        : 'invisible top-20 opacity-0'
-                    }`}
-                  >
-                    <div className="mt-[10px]">
-                      <div className="mt-[25px]">
-                        <a
-                          onClick={signOutUser}
-                          className=" cursor-pointer items-center rounded-[5px] border  border-[#000] bg-transparent py-[6px] px-[18px] text-[12px] font-bold !leading-[19px] text-[#575757] hover:bg-[#ececec]"
-                        >
-                          Sign out
-                        </a>
-                      </div>
-                    </div>
-                    <div
-                      onClick={() => {
-                        setUserNavbarOpen(false)
-                      }}
-                      className="ml-[20px]  flex cursor-pointer justify-end text-[16px] font-bold text-[#000] hover:text-[#313131]"
-                    >
-                      x
-                    </div>
-                  </nav>
-                </div>
-              ) : (
-                <div className="flex items-center">
-                  <ConnectKitButton.Custom>
-                    {({ isConnected, show, truncatedAddress, ensName }) => {
-                      return (
-                        <button
-                          onClick={show}
-                          className="rounded-md border-[1px] border-black/40 bg-white px-3 py-1 text-sm font-medium text-black/80 hover:bg-gray/10 "
-                        >
-                          {isConnected
-                            ? ensName ?? truncatedAddress
-                            : 'Connect Wallet'}
-                        </button>
-                      )
-                    }}
-                  </ConnectKitButton.Custom>{' '}
-                </div>
-              )}
+
+              <div className="flex items-center">
+                <ConnectKitButton.Custom>
+                  {({ isConnected, show, truncatedAddress, ensName }) => {
+                    return (
+                      <button
+                        onClick={show}
+                        className="rounded-md border-[1px] border-black/40 bg-white px-3 py-1 text-sm font-medium text-black/80 hover:bg-gray/10 "
+                      >
+                        {isConnected
+                          ? ensName ?? truncatedAddress
+                          : 'Connect Wallet'}
+                      </button>
+                    )
+                  }}
+                </ConnectKitButton.Custom>{' '}
+              </div>
             </div>
             {/* <div className="lg:hidden">
             <Dialog.Root>
@@ -822,60 +527,6 @@ const Header = () => {
           </div> */}
           </div>
         </div>
-        {isViewing && (
-          <div className="pl-[17px]  md:pl-[20px] lg:pl-[23px] xl:pl-[26.4px] 2xl:pl-[33px] ">
-            <div className="base:text-[7px] mt-[5px] md:text-[8.4px] lg:text-[9.8px] xl:text-[11.2px] 2xl:text-[14px]">
-              {tagXnode}
-            </div>
-            <div className="mt-[10px] flex justify-between">
-              <div className="text-[6px] font-medium text-[#8D8D8D] md:text-[7.2px]  lg:text-[8.4px]  xl:text-[9.6px] 2xl:text-[12px]">
-                {projectDescription}
-              </div>
-              <div className="mt-[5px] md:mt-[6px] lg:mt-[7px] xl:mt-[8px] 2xl:mt-[1px]">
-                <div className="text-[9px] font-medium text-[#000] md:text-[10.8px] lg:text-[12.6px] xl:text-[14.4px] 2xl:text-[18px]">
-                  Est. $<span className="font-bold">40</span> / month
-                </div>
-                <div className="relative mx-auto mt-[1px] flex w-fit">
-                  <div className="text-[6px] font-medium  text-[#12AD50] md:text-[7.2px]  lg:text-[8.4px]  xl:text-[11.2px] 2xl:text-[12px]">
-                    ~$13,000 savings
-                  </div>
-                  <img
-                    src={`${
-                      process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-                        ? process.env.NEXT_PUBLIC_BASE_PATH
-                        : ''
-                    }/images/header/question.svg`}
-                    alt="image"
-                    className="absolute top-0 -right-[10px] w-[4px]  md:w-[4.8px]  lg:w-[5.6px] xl:w-[6.4px] 2xl:w-[8px]"
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="mb-[20px] flex gap-x-[30px]">
-              <img
-                src={`${
-                  process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-                    ? process.env.NEXT_PUBLIC_BASE_PATH
-                    : ''
-                }/images/header/components.png`}
-                alt="image"
-                className={`mt-[8.5px] w-[170px] md:mt-[10px] md:w-[204px] lg:mt-[12px] lg:w-[238px] xl:mt-[13.6px] xl:w-[272px] 2xl:mt-[17px] 2xl:w-[340px]`}
-              />
-              <div className=" mt-auto mb-[5px]">
-                <a
-                  href={`${
-                    process.env.NEXT_PUBLIC_ENVIRONMENT === 'PROD'
-                      ? `/xnode/data-products`
-                      : `${'/data-products'}`
-                  }`}
-                  className=" cursor-pointer text-[6px] font-medium  text-[#0354EC] hover:text-[#023ba5] md:text-[7.2px]  lg:text-[8.4px] xl:text-[11.2px] 2xl:text-[12px]"
-                >
-                  More
-                </a>
-              </div>
-            </div>
-          </div>
-        )}
       </header>
     </>
   )
