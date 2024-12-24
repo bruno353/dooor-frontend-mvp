@@ -13,11 +13,85 @@ import { usePathname, useSearchParams, useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useConfig, useAccount } from 'wagmi'
-import { signMessage } from 'wagmi/actions'
+import { writeContract, signMessage, getPublicClient } from 'wagmi/actions'
+import { parseEther } from 'viem'
 
 import { hashObject } from '@/utils/functions'
 import { ConnectKitButton } from 'connectkit'
 import { callAxiosBackend } from '@/utils/general-api'
+
+const contractABI = JSON.parse(
+  '[	{		"inputs": [			{				"internalType": "uint256",				"name": "amount",				"type": "uint256"			},			{				"internalType": "address",				"name": "recipient",				"type": "address"			}		],		"name": "adminWithdraw",		"outputs": [],		"stateMutability": "nonpayable",		"type": "function"	},	{		"inputs": [],		"name": "deposit",		"outputs": [],		"stateMutability": "payable",		"type": "function"	},	{		"inputs": [			{				"internalType": "address",				"name": "_admin",				"type": "address"			}		],		"stateMutability": "nonpayable",		"type": "constructor"	},	{		"anonymous": false,		"inputs": [			{				"indexed": true,				"internalType": "address",				"name": "recipient",				"type": "address"			},			{				"indexed": false,				"internalType": "uint256",				"name": "amount",				"type": "uint256"			}		],		"name": "AdminWithdrawn",		"type": "event"	},	{		"anonymous": false,		"inputs": [			{				"indexed": true,				"internalType": "uint256",				"name": "depositId",				"type": "uint256"			},			{				"indexed": true,				"internalType": "address",				"name": "user",				"type": "address"			},			{				"indexed": false,				"internalType": "uint256",				"name": "amount",				"type": "uint256"			},			{				"indexed": false,				"internalType": "uint256",				"name": "timestamp",				"type": "uint256"			}		],		"name": "Deposited",		"type": "event"	},	{		"inputs": [],		"name": "admin",		"outputs": [			{				"internalType": "address",				"name": "",				"type": "address"			}		],		"stateMutability": "view",		"type": "function"	},	{		"inputs": [],		"name": "currentDepositId",		"outputs": [			{				"internalType": "uint256",				"name": "",				"type": "uint256"			}		],		"stateMutability": "view",		"type": "function"	},	{		"inputs": [			{				"internalType": "uint256",				"name": "",				"type": "uint256"			}		],		"name": "depositById",		"outputs": [			{				"internalType": "address",				"name": "user",				"type": "address"			},			{				"internalType": "uint256",				"name": "amount",				"type": "uint256"			},			{				"internalType": "uint256",				"name": "timestamp",				"type": "uint256"			}		],		"stateMutability": "view",		"type": "function"	},	{		"inputs": [],		"name": "getBalance",		"outputs": [			{				"internalType": "uint256",				"name": "",				"type": "uint256"			}		],		"stateMutability": "view",		"type": "function"	},	{		"inputs": [			{				"internalType": "uint256",				"name": "depositId",				"type": "uint256"			}		],		"name": "getDeposit",		"outputs": [			{				"internalType": "address",				"name": "user",				"type": "address"			},			{				"internalType": "uint256",				"name": "amount",				"type": "uint256"			},			{				"internalType": "uint256",				"name": "timestamp",				"type": "uint256"			}		],		"stateMutability": "view",		"type": "function"	},	{		"inputs": [			{				"internalType": "address",				"name": "user",				"type": "address"			}		],		"name": "getUserDepositIds",		"outputs": [			{				"internalType": "uint256[]",				"name": "",				"type": "uint256[]"			}		],		"stateMutability": "view",		"type": "function"	},	{		"inputs": [],		"name": "totalDeposits",		"outputs": [			{				"internalType": "uint256",				"name": "",				"type": "uint256"			}		],		"stateMutability": "view",		"type": "function"	},	{		"inputs": [			{				"internalType": "address",				"name": "",				"type": "address"			},			{				"internalType": "uint256",				"name": "",				"type": "uint256"			}		],		"name": "userDepositIds",		"outputs": [			{				"internalType": "uint256",				"name": "",				"type": "uint256"			}		],		"stateMutability": "view",		"type": "function"	}]',
+) // Add the ABI you provided
+const contractAddress = '0x76B8d7EDC027282809c776875eE5A60cb6DB7a27'
+const EXPECTED_CHAIN_ID = 11155111 // Set your expected chain ID
+
+function AddCreditsInput({ onClose }) {
+  const config = useConfig()
+  const { address, chain } = useAccount()
+
+  const [amount, setAmount] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [transactionSuccess, setTransactionSuccess] = useState(false)
+
+  async function handleDeposit() {
+    setIsLoading(true)
+    try {
+      console.log('the chain to create transaction')
+      console.log(chain)
+      const { hash } = await writeContract(config, {
+        address: contractAddress as `0x${string}`,
+        args: [], // Required empty array for functions with no args
+        abi: contractABI,
+        functionName: 'deposit',
+        account: address, // Add current user's address
+        value: parseEther(amount),
+        chain,
+      })
+
+      toast.success('Transaction submitted')
+      onClose()
+    } catch (err) {
+      toast.error('Failed to send transaction')
+      console.error(err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  return (
+    <div>
+      <div className="flex gap-2">
+        <input
+          type="number"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          placeholder="Amount in ETH"
+          className="w-24 rounded-md border-[1px] bg-gray/30 px-2  py-1 text-black"
+          min="0"
+          step="0.01"
+        />
+        <button
+          onClick={handleDeposit}
+          disabled={isLoading || !amount}
+          className="rounded-md border-[1px] border-gray/50 bg-white px-2 py-1 text-black disabled:opacity-50"
+        >
+          {isLoading ? 'Confirming...' : 'Confirm'}
+        </button>
+      </div>
+      {!transactionSuccess && (
+        <a
+          href="https://dashboard.internetcomputer.org/canister/bv7br-xyaaa-aaaam-ac4uq-cai"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mt-2 text-xs text-blue/70 hover:underline"
+        >
+          Validate transaction on ICP Dashboard
+        </a>
+      )}
+    </div>
+  )
+}
 
 const Header = () => {
   // Navbar toggle
@@ -27,6 +101,8 @@ const Header = () => {
   const [userNavbarOpen, setUserNavbarOpen] = useState(false)
   const [isLoadingUpdate, setIsLoadingUpdate] = useState(false)
   const [userConnected, setUserConnected] = useState()
+  const [showAddCredits, setShowAddCredits] = useState(false)
+
   const navbarToggleHandler = () => {
     setNavbarOpen(!navbarOpen)
   }
@@ -72,6 +148,7 @@ const Header = () => {
       }
     } catch (err) {
       console.error('Error in signature flow:', err)
+      console.log(err)
       toast.error('Error verifying wallet signature')
     }
   }
@@ -212,7 +289,7 @@ const Header = () => {
   async function fetchUserCredits(addressCheck: string) {
     try {
       const response = await axios(
-        `http://provider.europlots.com:32480/admin/user_credits/${addressCheck}`,
+        `http://provider.europlots.com:31584/admin/user_credits/${addressCheck}`,
         {
           method: 'GET',
           headers: {
@@ -487,7 +564,18 @@ const Header = () => {
                 {address && (
                   <div className="flex gap-x-2">
                     <div>Credits: {credits?.total_credits || 0}</div>
-                    <div>Add more</div>
+                    {showAddCredits ? (
+                      <AddCreditsInput
+                        onClose={() => setShowAddCredits(false)}
+                      />
+                    ) : (
+                      <button
+                        onClick={() => setShowAddCredits(true)}
+                        className="text-blue-500 hover:underline"
+                      >
+                        Add more
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
