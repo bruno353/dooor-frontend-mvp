@@ -1,3 +1,4 @@
+'use client'
 // components/ChatComponent.tsx
 import { useEffect, useState, useContext, useRef } from 'react'
 import { AccountContext } from '@/contexts/AccountContext'
