@@ -19,11 +19,6 @@ import 'react-toastify/dist/ReactToastify.css'
 import { getSanitizeText } from '@/utils/functions-chat'
 import { ChatComponent } from '../PythiaLandingPage/ChatComponent'
 
-const QuillNoSSRWrapper = dynamic(import('react-quill'), {
-  ssr: false,
-  loading: () => <p>Loading ...</p>,
-})
-
 const ChatPage = (id: any) => {
   return <ChatComponent mode="page" chatId={id.id} />
 }
