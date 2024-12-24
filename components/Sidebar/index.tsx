@@ -313,10 +313,7 @@ const Sidebar = ({ onValueChange }) => {
                           onClick={() => sendToChat(chat.id)}
                         >
                           <img
-                            src={
-                              chat.model?.image ||
-                              '/images/pythia/default-model.svg'
-                            }
+                            src={chat.model?.image}
                             alt={chat.model?.tag || 'model'}
                             className="h-4 w-4"
                           />

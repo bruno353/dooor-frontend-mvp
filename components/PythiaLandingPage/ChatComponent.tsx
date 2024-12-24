@@ -13,7 +13,7 @@ import 'react-quill/dist/quill.snow.css' // import styles
 import './react-quill.css'
 import { toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
-import { useRouter } from 'next/navigation'
+// import { useRouter } from 'next/navigation'
 
 interface ChatComponentProps {
   mode?: 'landing' | 'page'
@@ -29,7 +29,7 @@ export const ChatComponent = ({
   mode = 'landing',
   chatId,
 }: ChatComponentProps) => {
-  const router = useRouter()
+  // const router = useRouter()
 
   const { setChats, currentChat, setCurrentChat } = useContext(AccountContext)
   const [selectedModel, setSelectedModel] = useState(models[0])
@@ -107,12 +107,12 @@ export const ChatComponent = ({
       ChatStorage.saveChat(chatToUpdate)
       setCurrentChat({ ...chatToUpdate })
       setChats(ChatStorage.getAllChats())
-      if (mode === 'landing' && !currentChat) {
-        router.push(`/chat/${chatToUpdate.id}`)
-        if (typeof window !== 'undefined') {
-          window.location.reload()
-        }
-      }
+      // if (mode === 'landing' && !currentChat) {
+      //   router.push(`/chat/${chatToUpdate.id}`)
+      //   if (typeof window !== 'undefined') {
+      //     window.location.reload()
+      //   }
+      // }
     } catch (err) {
       console.error(err)
       toast.error('Error in chat')
