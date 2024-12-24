@@ -23,8 +23,10 @@ export const ChatStorage = {
 
   // Pega todos os chats
   getAllChats(): AiChatProps[] {
-    const chats = localStorage.getItem(CHATS_KEY)
-    return chats ? JSON.parse(chats) : []
+    if (typeof window !== 'undefined') {
+      const chats = localStorage.getItem(CHATS_KEY)
+      return chats ? JSON.parse(chats) : []
+    }
   },
 
   // Pega um chat específico
