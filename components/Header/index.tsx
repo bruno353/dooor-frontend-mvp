@@ -39,7 +39,7 @@ function AddCreditsInput({ onClose }) {
     try {
       console.log('the chain to create transaction')
       console.log(chain)
-      const { hash } = await writeContract(config, {
+      const result = await writeContract(config, {
         address: contractAddress as `0x${string}`,
         args: [], // Required empty array for functions with no args
         abi: contractABI,
