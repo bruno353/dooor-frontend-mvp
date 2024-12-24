@@ -483,7 +483,14 @@ const Header = () => {
                   />
                 </div>
               </div> */}
-              <div className="text-black">{credits?.total_credits}</div>
+              <div className="text-black">
+                {address && (
+                  <div className="flex gap-x-2">
+                    <div>Credits: {credits?.total_credits || 0}</div>
+                    <div>Add more</div>
+                  </div>
+                )}
+              </div>
               <div className="flex items-center gap-x-[15px] font-medium text-[#000] md:gap-x-[18px] lg:gap-x-[21px] xl:gap-x-[24px] 2xl:gap-x-[30px]">
                 {headerItens.map((option, index) => (
                   <a

@@ -108,7 +108,9 @@ export const ChatComponent = ({
       setChats(ChatStorage.getAllChats())
       if (mode === 'landing' && !currentChat) {
         router.push(`/chat/${chatToUpdate.id}`)
-        window.location.reload()
+        if (typeof window !== 'undefined') {
+          window.location.reload()
+        }
       }
     } catch (err) {
       console.error(err)
