@@ -4,7 +4,7 @@
 import { ChatComponent } from './ChatComponent'
 
 const PythiaLandingPage = () => {
-  return <div />
+  return <ChatComponent mode="landing" />
 }
 
 export default PythiaLandingPage
