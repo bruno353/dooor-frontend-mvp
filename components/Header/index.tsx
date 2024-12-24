@@ -563,7 +563,7 @@ const Header = () => {
               <div className="text-black">
                 {address && (
                   <div className="flex gap-x-2">
-                    <div>Credits: {credits?.total_credits || 0}</div>
+                    <div>Credits: {1000}</div>
                     {showAddCredits ? (
                       <AddCreditsInput
                         onClose={() => setShowAddCredits(false)}
