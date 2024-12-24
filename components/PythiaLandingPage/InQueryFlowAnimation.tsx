@@ -1,6 +1,11 @@
 'use client'
 import React, { useEffect, useState } from 'react'
-import LottiePlayer from 'react-lottie-player'
+
+import dynamic from 'next/dynamic'
+
+const LottiePlayer = dynamic(() => import('react-lottie-player'), {
+  ssr: false,
+})
 
 const QueryFlowAnimation = ({ isLoading }) => {
   const [animationStep, setAnimationStep] = useState(0)
@@ -42,12 +47,14 @@ const QueryFlowAnimation = ({ isLoading }) => {
               animationStep === 0 ? 'opacity-100' : 'opacity-10'
             }`}
           >
-            <LottiePlayer
-              loop
-              animationData={require('./arrow.json')}
-              play
-              style={{ width: '50px', height: 'auto' }}
-            />
+            {typeof window !== 'undefined' && (
+              <LottiePlayer
+                loop
+                animationData={require('./arrow.json')}
+                play
+                style={{ width: '50px', height: 'auto' }}
+              />
+            )}
           </div>
 
           {/* ICP Node */}
@@ -70,12 +77,14 @@ const QueryFlowAnimation = ({ isLoading }) => {
               animationStep === 1 ? 'opacity-100' : 'opacity-10'
             }`}
           >
-            <LottiePlayer
-              loop
-              animationData={require('./arrow.json')}
-              play
-              style={{ width: '50px', height: 'auto' }}
-            />
+            {typeof window !== 'undefined' && (
+              <LottiePlayer
+                loop
+                animationData={require('./arrow.json')}
+                play
+                style={{ width: '50px', height: 'auto' }}
+              />
+            )}
           </div>
 
           {/* Akash Node */}
@@ -98,16 +107,18 @@ const QueryFlowAnimation = ({ isLoading }) => {
               animationStep === 2 ? 'opacity-100' : 'opacity-10'
             }`}
           >
-            <LottiePlayer
-              loop
-              animationData={require('./curve-arrow.json')}
-              play
-              style={{
-                width: '250px',
-                height: 'auto',
-                transform: 'rotate(190deg)',
-              }}
-            />
+            {typeof window !== 'undefined' && (
+              <LottiePlayer
+                loop
+                animationData={require('./curve-arrow.json')}
+                play
+                style={{
+                  width: '250px',
+                  height: 'auto',
+                  transform: 'rotate(190deg)',
+                }}
+              />
+            )}
           </div>
 
           {/* Hash Information */}
